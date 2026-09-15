@@ -1,0 +1,77 @@
+<view class="start-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav spacer="{{true}}" />
+  <view class="start-content">
+    <view class="brand-mark" aria-hidden="true">
+      <view class="brand-pill brand-pill-left"></view>
+      <view class="brand-pill brand-pill-right"></view>
+    </view>
+
+    <view class="brand-name">药小伴</view>
+    <view class="brand-line">记效期，管余量，按时提醒</view>
+
+    <view wx:if="{{loading}}" class="status-card card" aria-live="polite">
+      <view class="loading-dot" aria-hidden="true"></view>
+      <text>正在准备你的私人药箱…</text>
+    </view>
+
+    <view wx:elif="{{loadFailed}}" class="status-card card" aria-live="assertive">
+      <view class="status-title">暂时没加载出来</view>
+      <view class="status-copy">请检查网络后重试。</view>
+      <button class="primary-button compact-button" bindtap="loadAccount" aria-label="重新加载">重新加载</button>
+    </view>
+
+    <view wx:elif="{{declined}}" class="consent-card card" aria-live="polite">
+      <view class="consent-title">你的数据由你决定</view>
+      <view class="consent-copy">未同意时，我们不会保存任何药品、成员或服药信息。你可以先查看完整隐私政策，再决定是否使用。</view>
+      <button class="primary-button" bindtap="reconsiderPrivacy" aria-label="重新查看隐私说明">重新查看</button>
+      <button class="plain-button" bindtap="openPrivacy" aria-label="查看完整隐私政策">查看完整隐私政策</button>
+    </view>
+
+    <view wx:else class="consent-card card">
+      <view class="consent-kicker">开始前，请了解</view>
+      <view class="consent-title">私人记录，不做医疗判断</view>
+      <view class="consent-copy">
+        为了保存药名、服用计划和提醒，药小伴需要处理健康相关信息。数据只用于你的个人记录与提醒，不用于广告，也不会判断剂量或提供医疗建议。
+      </view>
+
+      <view class="promise-list" aria-label="隐私承诺">
+        <view class="promise-row">
+          <text class="promise-icon" aria-hidden="true">✓</text>
+          <text>仅保存你主动记录的内容</text>
+        </view>
+        <view class="promise-row">
+          <text class="promise-icon" aria-hidden="true">✓</text>
+          <text>可随时导出或删除全部数据</text>
+        </view>
+        <view class="promise-row">
+          <text class="promise-icon" aria-hidden="true">✓</text>
+          <text>日历锁屏默认不显示药名</text>
+        </view>
+      </view>
+
+      <checkbox-group bindchange="onConsentChange" aria-label="隐私政策同意选项">
+        <label class="consent-check">
+          <checkbox value="accepted" checked="{{consentChecked}}" color="#167A50" />
+          <text>我已阅读并同意处理上述敏感信息</text>
+        </label>
+      </checkbox-group>
+
+      <button class="policy-button" bindtap="openPrivacy" aria-label="查看完整隐私政策">
+        <text>查看完整隐私政策</text><text class="policy-arrow">›</text>
+      </button>
+    </view>
+
+    <block wx:if="{{!loading && !loadFailed && !declined}}">
+      <button
+        class="start-primary"
+        disabled="{{!consentChecked || accepting}}"
+        loading="{{accepting}}"
+        bindtap="acceptPrivacy"
+        aria-label="同意隐私政策并继续"
+      >同意并继续</button>
+      <button class="start-secondary" disabled="{{accepting}}" bindtap="declinePrivacy" aria-label="暂不使用">暂不使用</button>
+    </block>
+  </view>
+
+  <view class="start-foot">本工具不替代医生、药师或药品说明书</view>
+</view>

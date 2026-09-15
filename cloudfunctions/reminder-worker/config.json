@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "openapi": ["subscribeMessage.send"]
+  },
+  "triggers": [
+    {
+      "name": "dispatch-due-reminders",
+      "type": "timer",
+      "config": "0 * * * * * *"
+    }
+  ]
+}

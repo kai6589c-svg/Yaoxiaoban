@@ -1,0 +1,50 @@
+{
+  "name": "yaoxiaoban-miniprogram",
+  "version": "0.5.0-beta.18",
+  "private": true,
+  "description": "药小伴：极简家庭药品记录与提醒微信小程序",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/build-miniprogram.mjs",
+    "build:cloudfunctions": "npm run build:shared && node scripts/build-cloudfunctions.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "test": "vitest run --coverage",
+    "test:cloud": "npm test --prefix cloudfunctions/medicine-api && npm test --prefix cloudfunctions/reminder-worker && npm test --prefix cloudfunctions/maintenance-worker",
+    "test:e2e": "node tests/e2e/journeys.mjs",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "security:audit": "node scripts/audit-production-dependencies.mjs",
+    "verify:cloudbase-manifest": "node scripts/verify-cloudbase-manifest.mjs",
+    "verify:release-config": "node scripts/verify-release-config.mjs",
+    "verify:app-version": "node scripts/verify-app-version.mjs",
+    "verify:bundle-size": "node scripts/verify-bundle-size.mjs",
+    "verify": "npm run build && npm run verify:release-config && npm run typecheck && npm run lint && npm run test && npm run test:cloud && npm run verify:cloudbase-manifest && npm run format:check && npm run security:audit",
+    "release:check": "node scripts/verify-production.mjs && npm run check",
+    "prepare:wechat-deploy": "node scripts/prepare-wechat-deploy.mjs",
+    "build:shared": "node scripts/build-shared-domain.mjs",
+    "configure": "node scripts/configure.mjs",
+    "postinstall": "npm run configure",
+    "prebuild": "npm run configure",
+    "test:config": "node --test scripts/deployment-config.test.mjs",
+    "check": "npm run build && npm run build:cloudfunctions && npm run verify:release-config && npm run verify:app-version && npm run typecheck && npm run lint && npm run test && npm run test:cloud && npm run verify:cloudbase-manifest && npm run verify:bundle-size && npm run format:check && npm run security:audit && npm run test:config",
+    "pretest:cloud": "npm ci --prefix cloudfunctions/medicine-api --ignore-scripts && npm ci --prefix cloudfunctions/reminder-worker --ignore-scripts && npm ci --prefix cloudfunctions/maintenance-worker --ignore-scripts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/node": "^24.3.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "esbuild": "0.28.2",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.3.0",
+    "miniprogram-api-typings": "^5.2.3",
+    "miniprogram-automator": "0.12.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^3.2.4"
+  }
+}

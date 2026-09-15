@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <g transform="rotate(-38 32 32)"><rect x="8" y="20" width="48" height="24" rx="12" fill="#fff" stroke="#167A50" stroke-width="4"/><path d="M32 20v24" stroke="#167A50" stroke-width="4"/><path d="M8 32a12 12 0 0 1 12-12h12v24H20A12 12 0 0 1 8 32Z" fill="#23895F"/></g>
+</svg>

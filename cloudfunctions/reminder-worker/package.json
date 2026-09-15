@@ -1,0 +1,23 @@
+{
+  "name": "yaoxiaoban-reminder-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "药小伴低频订阅消息定时执行器",
+  "main": "index.js",
+  "engines": {
+    "node": ">=16.13"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "wx-server-sdk": "^4.0.2",
+    "lodash.set": "file:./yaoxiaoban-lodash-set-compat-1.0.0.tgz",
+    "lodash.unset": "file:./yaoxiaoban-lodash-unset-compat-1.0.0.tgz"
+  },
+  "overrides": {
+    "axios": "0.33.0",
+    "lodash.set": "$lodash.set",
+    "lodash.unset": "$lodash.unset"
+  }
+}

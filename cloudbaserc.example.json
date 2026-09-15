@@ -1,0 +1,46 @@
+{
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "version": "2.1",
+  "envId": "",
+  "functionRoot": "./dist/cloudfunctions",
+  "functions": [
+    {
+      "name": "medicine-api",
+      "runtime": "Nodejs16.13",
+      "handler": "index.main",
+      "memorySize": 256,
+      "timeout": 30,
+      "installDependency": true
+    },
+    {
+      "name": "reminder-worker",
+      "runtime": "Nodejs16.13",
+      "handler": "index.main",
+      "memorySize": 256,
+      "timeout": 60,
+      "installDependency": true,
+      "triggers": [
+        {
+          "name": "dispatch-due-reminders",
+          "type": "timer",
+          "config": "0 * * * * * *"
+        }
+      ]
+    },
+    {
+      "name": "maintenance-worker",
+      "runtime": "Nodejs16.13",
+      "handler": "index.main",
+      "memorySize": 256,
+      "timeout": 60,
+      "installDependency": true,
+      "triggers": [
+        {
+          "name": "run-maintenance-every-fifteen-minutes",
+          "type": "timer",
+          "config": "0 */15 * * * * *"
+        }
+      ]
+    }
+  ]
+}

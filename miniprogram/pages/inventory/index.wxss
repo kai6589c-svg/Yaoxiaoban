@@ -1,0 +1,175 @@
+.inventory-page {
+  padding-bottom: calc(142rpx + env(safe-area-inset-bottom));
+}
+
+.loading-copy {
+  padding: 120rpx 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.inventory-error {
+  margin-top: 28rpx;
+}
+
+.guide-card {
+  padding: 30rpx;
+  background: linear-gradient(145deg, #fff, #f8fbf8);
+}
+
+.guide-main {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+
+.guide-icon {
+  display: flex;
+  width: 82rpx;
+  height: 82rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 26rpx;
+  background: var(--brand-soft);
+}
+
+.guide-icon image {
+  width: 52rpx;
+  height: 52rpx;
+}
+
+.guide-title {
+  font-size: 29rpx;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.guide-copy {
+  margin-top: 7rpx;
+  color: var(--muted);
+  font-size: 23rpx;
+}
+
+.guide-note,
+.privacy-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  border-radius: 22rpx;
+  color: var(--muted);
+  background: linear-gradient(135deg, #eaf5ef, #edf5f0);
+  font-size: 21rpx;
+  line-height: 1.55;
+}
+
+.guide-note {
+  margin-top: 25rpx;
+  padding: 20rpx 22rpx;
+}
+
+.guide-note image,
+.privacy-hint image {
+  width: 26rpx;
+  height: 26rpx;
+  flex-shrink: 0;
+  margin-top: 3rpx;
+}
+
+.quantity-card {
+  margin-top: 24rpx;
+  padding: 32rpx 28rpx 26rpx;
+}
+
+.quantity-label {
+  color: var(--brand-deep);
+  font-size: 28rpx;
+  font-weight: 750;
+}
+
+.quantity-control {
+  display: flex;
+  min-height: 250rpx;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-input {
+  width: 235rpx;
+  height: 180rpx;
+  color: var(--brand-deep);
+  font-size: 124rpx;
+  font-weight: 500;
+  line-height: 180rpx;
+  text-align: right;
+}
+
+.unit {
+  margin: 50rpx 0 0 20rpx;
+  color: var(--brand-deep);
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.quantity-divider {
+  height: 1rpx;
+  background: var(--line);
+}
+
+.recorded-row {
+  display: flex;
+  align-items: center;
+  gap: 17rpx;
+  padding: 26rpx 4rpx 22rpx;
+}
+
+.recorded-icon {
+  display: flex;
+  width: 52rpx;
+  height: 52rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 17rpx;
+  background: var(--brand-soft);
+}
+
+.recorded-icon image {
+  width: 29rpx;
+  height: 29rpx;
+}
+
+.recorded-label {
+  font-size: 23rpx;
+  font-weight: 650;
+}
+
+.recorded-value {
+  margin-top: 3rpx;
+  color: var(--muted);
+  font-size: 22rpx;
+}
+
+.privacy-hint {
+  padding: 18rpx 20rpx;
+}
+
+.bottom-space {
+  height: 90rpx;
+}
+
+.sticky-save {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 18rpx 36rpx calc(18rpx + env(safe-area-inset-bottom));
+  border-top: 1rpx solid rgba(225, 231, 225, 0.85);
+  background: rgba(247, 248, 243, 0.97);
+}
+
+.save-button {
+  min-height: 86rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #16845a, #116d49);
+}

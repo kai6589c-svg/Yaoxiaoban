@@ -1,0 +1,209 @@
+<view class="page subpage settings-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="设置" />
+  <button class="secondary-button" bindtap="openPendingSaves">待同步任务</button>
+  <view class="settings-subtitle">只保留真正有用的选项</view>
+
+  <view wx:if="{{demoMode}}" class="demo-banner" aria-live="polite">
+    当前是本机演示模式，数据只保存在这台开发设备；正式发布前必须接入云服务。
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-card card" aria-live="polite">正在加载设置…</view>
+
+  <view wx:elif="{{loadFailed}}" class="empty card" aria-live="assertive">
+    <view class="empty-symbol" aria-hidden="true">!</view>
+    <view class="empty-title">设置暂时没加载出来</view>
+    <view class="empty-copy">请检查网络后重试。</view>
+    <button class="primary-button" bindtap="loadSettings">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="settings-card card">
+      <view class="settings-section-title">成员</view>
+      <view class="settings-row" bindtap="openProfiles" role="button" aria-label="管理家庭成员">
+        <view class="row-icon"><image src="/assets/ui/user.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">家庭成员</view>
+          <view class="row-copy">一个微信账号内代为记录</view>
+        </view>
+        <text class="row-arrow" aria-hidden="true">›</text>
+      </view>
+    </view>
+
+    <view class="settings-card card">
+      <view class="settings-section-title">提醒</view>
+      <view class="settings-row" bindtap="openReminders" role="button" aria-label="设置提醒">
+        <view class="row-icon"><image src="/assets/ui/bell.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">设置提醒</view>
+          <view class="row-copy">微信推送提醒 · 手机日历提醒</view>
+        </view>
+        <text class="row-arrow" aria-hidden="true">›</text>
+      </view>
+      <picker
+        mode="selector"
+        range="{{expiryOptions}}"
+        range-key="label"
+        value="{{expiryIndex}}"
+        disabled="{{savingKey !== ''}}"
+        bindchange="onExpiryChange"
+        aria-label="设置有效期提醒时间，当前{{expiryLabel}}"
+      >
+        <view class="settings-row">
+          <view class="row-icon"><image src="/assets/ui/bell.png" mode="aspectFit" /></view>
+          <view class="row-main">
+            <view class="row-title">有效期提醒</view>
+            <view class="row-copy">进入预警范围后显示在“今天”</view>
+          </view>
+          <view class="row-value">{{expiryLabel}}</view>
+          <text class="row-arrow" aria-hidden="true">›</text>
+        </view>
+      </picker>
+
+      <picker
+        mode="selector"
+        range="{{stockOptions}}"
+        range-key="label"
+        value="{{stockIndex}}"
+        disabled="{{savingKey !== ''}}"
+        bindchange="onStockChange"
+        aria-label="设置预计余量提醒时间，当前{{stockLabel}}"
+      >
+        <view class="settings-row">
+          <view class="row-icon"><image src="/assets/ui/stock.png" mode="aspectFit" /></view>
+          <view class="row-main">
+            <view class="row-title">预计余量提醒</view>
+            <view class="row-copy">按计划快用完时先提醒盘点</view>
+          </view>
+          <view class="row-value">{{stockLabel}}</view>
+          <text class="row-arrow" aria-hidden="true">›</text>
+        </view>
+      </picker>
+
+    </view>
+    <view class="settings-card card">
+      <view class="settings-section-title">隐私显示</view>
+      <view class="settings-row">
+        <view class="row-icon"><image src="/assets/ui/calendar.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">日历中显示药名</view>
+          <view class="row-copy" wx:if="{{notificationDetailed}}">已选择详细标题，锁屏上可能被他人看到</view>
+          <view class="row-copy" wx:else>默认只显示“药小伴服药提醒”</view>
+        </view>
+        <switch
+          checked="{{notificationDetailed}}"
+          disabled="{{savingKey !== ''}}"
+          color="#167A50"
+          bindchange="onPrivacyDisplayChange"
+          aria-label="在日历中显示药名"
+        />
+      </view>
+    </view>
+
+    <view class="settings-card card">
+      <view class="settings-section-title">我的数据</view>
+      <view class="settings-row" bindtap="exportMedicineList" role="button"><view class="row-main"><view class="row-title">导出可读药盒清单</view><view class="row-copy">复制药名、规格、成员与日期，可粘贴阅读</view></view><text class="row-arrow">›</text></view>
+      <view class="settings-row {{exporting ? 'disabled' : ''}}" bindtap="exportAndCopy" role="button" aria-label="生成并复制我的数据">
+        <view class="row-icon"><image src="/assets/ui/download.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">完整数据备份（JSON）</view>
+          <view class="row-copy">包含药品、计划、盘点与服药记录</view>
+        </view>
+        <text class="row-arrow" aria-hidden="true">›</text>
+      </view>
+      <view class="settings-row" bindtap="openPrivacy" role="button" aria-label="查看隐私政策">
+        <view class="row-icon"><image src="/assets/ui/shield.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">隐私政策</view>
+          <view class="row-copy">了解收集、使用、保存与删除规则</view>
+        </view>
+        <text class="row-arrow" aria-hidden="true">›</text>
+      </view>
+    </view>
+
+    <view class="settings-card card">
+      <view class="settings-section-title danger-heading">账号</view>
+      <view class="settings-row danger-row" bindtap="openDelete" role="button" aria-label="删除账号与全部数据">
+        <view class="row-icon danger-icon"><image src="/assets/ui/archive.png" mode="aspectFit" /></view>
+        <view class="row-main">
+          <view class="row-title">删除账号与全部数据</view>
+          <view class="row-copy">删除后无法恢复</view>
+        </view>
+        <text class="row-arrow" aria-hidden="true">›</text>
+      </view>
+    </view>
+
+    <view class="settings-card card">
+      <view class="settings-section-title">帮助与问题反馈</view>
+      <view class="row-copy">照片保存失败：保留药盒信息后，可从详情进入编辑重试照片。</view>
+      <view class="row-copy">提醒：微信推送尚未开通，手机日历需单独添加；修改计划后请检查旧日历。</view>
+      <button class="secondary-button" bindtap="copyDiagnostic">复制诊断编号</button>
+      <view class="row-copy">反馈时粘贴编号，并说明当时的操作。本机保存最近一次服务错误，不包含药名或照片，不会自动发送反馈。</view>
+    </view>
+    <view class="settings-foot">
+      <view>时区：中国北京时间（UTC+8）</view>
+      <view>药小伴是记录工具，不代替医生、药师或药品说明书。</view>
+    </view>
+  </block>
+</view>
+
+<reminder-settings open="{{reminderOpen}}" bindclose="closeReminders" />
+
+<view
+  wx:if="{{deleteOpen}}"
+  class="modal-backdrop"
+  catchtap="closeDelete"
+  catchtouchmove="noop"
+  aria-role="dialog"
+  aria-modal="true"
+  aria-label="删除账号与全部数据"
+>
+  <view class="delete-sheet" catchtap="noop">
+    <block wx:if="{{deleteStep === 1}}">
+      <view class="delete-kicker">第 1 步，共 2 步</view>
+      <view class="delete-title">删除全部数据？</view>
+      <view class="delete-copy">这会删除所有成员、药盒、计划、盘点和服药记录，且无法恢复。</view>
+      <view wx:if="{{hasCalendarExports}}" class="calendar-warning">
+        <view class="warning-title">手机日历不会自动清理</view>
+        <view class="warning-copy">账号删除后，以前添加的日历提醒可能仍然存在。</view>
+        <checkbox-group bindchange="onCalendarAcknowledgement">
+          <label class="acknowledge-row">
+            <checkbox value="calendar" checked="{{calendarAcknowledged}}" color="#B63D3D" />
+            <text>我知道手机日历中的旧提醒需要自己删除</text>
+          </label>
+        </checkbox-group>
+      </view>
+      <button
+        class="danger-button sheet-button"
+        disabled="{{hasCalendarExports && !calendarAcknowledged}}"
+        bindtap="continueDelete"
+      >
+        继续
+      </button>
+      <button class="sheet-cancel" bindtap="closeDelete">取消</button>
+    </block>
+
+    <block wx:else>
+      <view class="delete-kicker">第 2 步，共 2 步</view>
+      <view class="delete-title">请输入“删除”</view>
+      <view class="delete-copy">这是最后一步。提交后，数据将立即无法访问。</view>
+      <input
+        class="delete-input"
+        value="{{deletePhrase}}"
+        maxlength="2"
+        focus="{{deleteStep === 2}}"
+        bindinput="onDeletePhraseInput"
+        placeholder="输入：删除"
+        aria-label="输入删除二字以确认"
+      />
+      <button
+        class="danger-button sheet-button"
+        disabled="{{deletePhrase !== '删除' || deleting}}"
+        loading="{{deleting}}"
+        bindtap="confirmDelete"
+      >
+        永久删除
+      </button>
+      <button class="sheet-cancel" disabled="{{deleting}}" bindtap="backDeleteStep">返回上一步</button>
+    </block>
+  </view>
+</view>

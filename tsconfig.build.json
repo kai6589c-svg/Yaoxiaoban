@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "./miniprogram",
+    "outDir": "./dist/miniprogram",
+    "sourceMap": false,
+    "declaration": false
+  },
+  "include": ["miniprogram/**/*.ts"],
+  "exclude": ["node_modules", "cloudfunctions", "dist"]
+}

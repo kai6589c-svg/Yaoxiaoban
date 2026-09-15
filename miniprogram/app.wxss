@@ -1,0 +1,265 @@
+page {
+  --brand: #167a50;
+  --brand-deep: #0e5c3b;
+  --brand-soft: #e7f3ec;
+  --ink: #17201b;
+  --muted: #687069;
+  --line: #e5e9e3;
+  --surface: #ffffff;
+  --canvas: #f7f8f3;
+  --warning: #a65f00;
+  --warning-soft: #fff1d6;
+  --danger: #b63d3d;
+  --danger-soft: #fdeaea;
+  --radius: 36rpx;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+    sans-serif;
+  font-size: 28rpx;
+  line-height: 1.45;
+}
+
+view,
+text,
+button,
+input,
+textarea,
+picker,
+switch {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: inherit;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+button::after {
+  border: 0;
+}
+
+.page {
+  min-height: 100vh;
+  padding: calc(env(safe-area-inset-top) + 90rpx) 36rpx
+    calc(48rpx + env(safe-area-inset-bottom));
+}
+
+.page.subpage {
+  padding-top: 0;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 40rpx;
+}
+
+.page-title {
+  font-size: 60rpx;
+  font-weight: 700;
+  letter-spacing: -2rpx;
+  line-height: 1.12;
+}
+
+.page-subtitle {
+  margin-top: 8rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.text-button {
+  display: flex;
+  min-height: 80rpx;
+  align-items: center;
+  justify-content: center;
+  padding: 0 26rpx;
+  border-radius: 26rpx;
+  color: var(--brand-deep);
+  background: var(--brand-soft);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.card {
+  border: 1rpx solid rgba(20, 54, 36, 0.06);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 14rpx 44rpx rgba(26, 58, 39, 0.055);
+}
+
+.section-title {
+  margin: 44rpx 0 22rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.primary-button,
+.secondary-button,
+.danger-button {
+  display: flex;
+  min-height: 92rpx;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.primary-button {
+  color: #fff;
+  background: var(--brand);
+  box-shadow: 0 12rpx 24rpx rgba(22, 122, 80, 0.2);
+}
+
+.primary-button[disabled] {
+  opacity: 0.45;
+}
+
+.secondary-button {
+  color: var(--brand-deep);
+  background: var(--brand-soft);
+}
+
+.danger-button {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.form-card {
+  padding: 8rpx 30rpx;
+}
+
+.form-row {
+  display: flex;
+  min-height: 112rpx;
+  align-items: center;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.form-row:last-child {
+  border-bottom: 0;
+}
+
+.form-label {
+  width: 230rpx;
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 24rpx;
+  line-height: 1.35;
+}
+
+.form-value,
+.form-input {
+  min-width: 0;
+  flex: 1;
+  color: var(--ink);
+  font-size: 26rpx;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.form-input {
+  height: 112rpx;
+}
+
+.form-value,
+.form-value > view {
+  display: flex;
+  min-height: 112rpx;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.form-placeholder {
+  color: #a6aca7;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 22rpx;
+  line-height: 1.55;
+}
+
+.empty {
+  padding: 80rpx 40rpx;
+  text-align: center;
+}
+
+.empty-symbol {
+  display: flex;
+  width: 108rpx;
+  height: 108rpx;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24rpx;
+  border-radius: 36rpx;
+  color: var(--brand-deep);
+  background: var(--brand-soft);
+  font-size: 48rpx;
+  font-weight: 700;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.empty-copy {
+  margin: 12rpx 0 30rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.toast-safe-bottom {
+  padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+}
+
+.page.root-page {
+  padding-top: 0;
+}
+@media (max-width: 360px) {
+  .page-head {
+    flex-wrap: wrap;
+    gap: 20rpx;
+  }
+  .page-title {
+    font-size: 48rpx;
+  }
+}
+
+.medicine-name,
+.archived-name,
+.detail-name,
+.log-title {
+  font-size: calc(30rpx * var(--text-scale, 1));
+  line-height: 1.5;
+}
+.archived-meta,
+.medicine-member,
+.stat-copy,
+.feature-copy,
+.row-copy,
+.log-copy {
+  font-size: calc(24rpx * var(--text-scale, 1));
+  line-height: 1.6;
+}
+.form-label,
+.stat-value,
+.feature-title,
+.row-title {
+  font-size: calc(28rpx * var(--text-scale, 1));
+  line-height: 1.5;
+}

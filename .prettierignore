@@ -1,0 +1,12 @@
+node_modules
+coverage
+dist
+miniprogram_npm
+package-lock.json
+artifacts
+output
+tmp
+.e2e-project
+docs/handoffs
+
+cloudfunctions/medicine-api/lib/dashboard-shared.js

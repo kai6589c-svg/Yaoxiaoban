@@ -1,0 +1,237 @@
+:host {
+  --sheet-brand: #167a50;
+  --sheet-ink: #17201b;
+  --sheet-muted: #687069;
+  --sheet-line: #e5e9e3;
+}
+.reminder-backdrop {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(15, 26, 19, 0.36);
+}
+.reminder-sheet {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 90vh;
+  padding: 24rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
+  border-radius: 48rpx 48rpx 0 0;
+  background: #fff;
+  color: var(--sheet-ink);
+  animation: sheet-enter 0.18s ease-out;
+}
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.sheet-title {
+  font-size: calc(40rpx * var(--text-scale, 1));
+  font-weight: 650;
+}
+.sheet-close {
+  display: flex;
+  width: 88rpx;
+  height: 88rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: #f2f4f1;
+  color: var(--sheet-muted);
+  font-size: 44rpx;
+  line-height: 1;
+}
+.sheet-close::after,
+.help-button::after,
+.calendar-write::after {
+  border: 0;
+}
+.sheet-copy,
+.calendar-note {
+  color: var(--sheet-muted);
+  font-size: calc(24rpx * var(--text-scale, 1));
+  line-height: 1.5;
+}
+.sheet-copy {
+  margin: 4rpx 0 12rpx;
+}
+.sheet-scroll {
+  flex-shrink: 1;
+  min-height: 0;
+  height: 670rpx;
+  max-height: calc(90vh - 300rpx - env(safe-area-inset-bottom));
+}
+.sheet-section-heading {
+  display: flex;
+  min-height: 72rpx;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--sheet-muted);
+  font-size: calc(24rpx * var(--text-scale, 1));
+  font-weight: 600;
+}
+.help-button {
+  display: flex;
+  min-height: 88rpx;
+  align-items: center;
+  margin: 0;
+  padding: 0 8rpx;
+  background: transparent;
+  color: var(--sheet-brand);
+  font-size: calc(22rpx * var(--text-scale, 1));
+  font-weight: 400;
+  border-radius: 16rpx;
+  line-height: 1.4;
+}
+.channel-row {
+  display: flex;
+  min-height: 112rpx;
+  padding: 14rpx 0;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 14rpx;
+  border-bottom: 1rpx solid var(--sheet-line);
+}
+.channel-row:last-child {
+  border-bottom: 0;
+}
+.channel-icon {
+  display: flex;
+  width: 56rpx;
+  height: 56rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  background: #eef6f1;
+}
+.channel-icon-image {
+  width: 30rpx;
+  height: 30rpx;
+}
+.channel-body {
+  min-width: 0;
+  flex: 1;
+}
+.channel-title {
+  font-size: calc(30rpx * var(--text-scale, 1));
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.channel-copy {
+  margin-top: 3rpx;
+  color: var(--sheet-muted);
+  font-size: calc(23rpx * var(--text-scale, 1));
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.channel-status {
+  max-width: 150rpx;
+  flex-shrink: 0;
+  color: var(--sheet-muted);
+  font-size: calc(22rpx * var(--text-scale, 1));
+  line-height: 1.4;
+  text-align: right;
+}
+.status-active {
+  color: var(--sheet-brand);
+}
+.channel-arrow {
+  flex-shrink: 0;
+  color: #909990;
+  font-size: 34rpx;
+}
+.calendar-heading {
+  border-top: 12rpx solid #f7f8f5;
+  margin: 8rpx -32rpx 0;
+  padding: 12rpx 32rpx 0;
+}
+.calendar-note {
+  padding: 8rpx 0 16rpx 70rpx;
+  font-size: calc(22rpx * var(--text-scale, 1));
+}
+.sheet-footer {
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--sheet-line);
+}
+.calendar-write {
+  display: flex;
+  width: 100%;
+  min-height: 96rpx;
+  margin: 0;
+  padding: 20rpx 24rpx;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 24rpx;
+  background: var(--sheet-brand);
+  color: #fff;
+  font-size: calc(28rpx * var(--text-scale, 1));
+  line-height: 1.4;
+  font-weight: 600;
+}
+.calendar-write-disabled {
+  opacity: 0.5;
+}
+.calendar-write-pressed {
+  background: #0e5c3b;
+}
+.channel-pressed {
+  background: #eef3ef;
+}
+.timezone {
+  margin-top: 12rpx;
+  color: #89918a;
+  font-size: calc(22rpx * var(--text-scale, 1));
+  text-align: center;
+  line-height: 1.5;
+}
+@keyframes sheet-enter {
+  from {
+    transform: translateY(24rpx);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reminder-sheet {
+    animation: none;
+  }
+}
+
+.sheet-header,
+.sheet-footer {
+  flex-shrink: 0;
+}
+/* Override WeChat's native button sizing, including its type selector rules. */
+.sheet-close {
+  width: 88rpx !important;
+  min-width: 88rpx;
+  max-width: 88rpx;
+  padding: 0 !important;
+}
+.help-button {
+  width: auto !important;
+  max-width: none;
+}
+.calendar-write {
+  width: 100% !important;
+  max-width: none;
+}
+.sheet-close,
+.help-button {
+  margin: 0 !important;
+}

@@ -1,0 +1,41 @@
+<view wx:if="{{open}}" class="reminder-backdrop" catchtap="close" catchtouchmove="noop" style="--text-scale: {{textScale || 1}};">
+  <view class="reminder-sheet" catchtap="noop" aria-role="dialog" aria-modal="true" aria-label="设置提醒">
+    <view class="sheet-header">
+      <view class="sheet-head"><view class="sheet-title">设置提醒</view><button class="sheet-close {{busy ? 'calendar-write-disabled' : ''}}" aria-label="关闭设置提醒" disabled="{{busy}}" bindtap="close" hover-class="channel-pressed">×</button></view>
+      <view class="sheet-copy">微信提醒与手机日历互不影响，可分别设置</view>
+    </view>
+    <scroll-view class="sheet-scroll" scroll-y="{{true}}" enhanced="{{true}}" bounces="{{false}}">
+      <view class="sheet-section-heading"><text>微信提醒</text><button class="help-button" bindtap="explainWechat" hover-class="channel-pressed" aria-label="了解微信提醒授权规则">授权说明 ⓘ</button></view>
+      <view class="channel-group">
+        <view class="channel-row" role="button" data-kind="dose" bindtap="requestKind" hover-class="channel-pressed" aria-label="服药时间微信提醒，申请一次授权">
+          <view class="channel-icon"><image class="channel-icon-image" src="/assets/ui/messages.png" mode="aspectFit" /></view>
+          <view class="channel-body"><view class="channel-title">服药时间</view><view class="channel-copy">{{doseCopy}}</view></view>
+          <text class="channel-status {{doseStatus === '已授权下一条' ? 'status-active' : ''}}">{{doseStatus === '读取失败，可稍后重试' ? '暂时无法读取' : doseStatus === '可申请一次授权' ? '未授权' : doseStatus}}</text><text class="channel-arrow">›</text>
+        </view>
+        <view class="channel-row" role="button" data-kind="expiry" bindtap="requestKind" hover-class="channel-pressed" aria-label="药品到期微信提醒，申请一次授权">
+          <view class="channel-icon"><image class="channel-icon-image" src="/assets/ui/warning-amber.png" mode="aspectFit" /></view>
+          <view class="channel-body"><view class="channel-title">药品到期</view><view class="channel-copy">{{expiryCopy}}</view></view>
+          <text class="channel-status {{expiryStatus === '已授权下一条' ? 'status-active' : ''}}">{{expiryStatus === '可申请一次授权' ? '未授权' : expiryStatus}}</text><text class="channel-arrow">›</text>
+        </view>
+        <view class="channel-row" role="button" data-kind="shortage" bindtap="requestKind" hover-class="channel-pressed" aria-label="余量不足微信提醒，申请一次授权">
+          <view class="channel-icon"><image class="channel-icon-image" src="/assets/ui/stock.png" mode="aspectFit" /></view>
+          <view class="channel-body"><view class="channel-title">余量不足</view><view class="channel-copy">{{shortageCopy}}</view></view>
+          <text class="channel-status {{shortageStatus === '已授权下一条' ? 'status-active' : ''}}">{{shortageStatus === '可申请一次授权' ? '未授权' : shortageStatus}}</text><text class="channel-arrow">›</text>
+        </view>
+      </view>
+      <view class="sheet-section-heading calendar-heading">手机日历</view>
+      <view class="channel-group">
+        <view class="channel-row" role="button" bindtap="openCalendarSettings" hover-class="channel-pressed" aria-label="手机日历提醒，打开日历授权设置">
+          <view class="channel-icon"><image class="channel-icon-image" src="/assets/ui/calendar.png" mode="aspectFit" /></view>
+          <view class="channel-body"><view class="channel-title">手机日历</view><view class="channel-copy">{{hasFixedPlan ? '将服药计划添加到系统日历' : '先设置固定服药计划'}}</view></view>
+          <text class="channel-status {{calendarAdded && !calendarDenied ? 'status-active' : ''}}">{{openingSettings ? '打开中…' : calendarDenied ? '去授权' : hasFixedPlan ? calendarStatus : '查看授权'}}</text><text class="channel-arrow">›</text>
+        </view>
+      </view>
+      <view class="calendar-note">日历提醒由系统日历管理</view>
+    </scroll-view>
+    <view class="sheet-footer">
+      <button wx:if="{{hasFixedPlan}}" class="calendar-write {{busy ? 'calendar-write-disabled' : ''}}" bindtap="writeCalendar" disabled="{{busy}}" loading="{{busy}}" hover-class="calendar-write-pressed">{{calendarDenied ? '授权并添加' : calendarAdded || calendarStatus === '待更新' ? '更新日历计划' : '添加到手机日历'}}</button>
+      <view class="timezone">时区：北京时间 GMT+8</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,150 @@
+<view class="page root-page cabinet-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav spacer="{{true}}" />
+  <view class="page-head">
+    <view>
+      <view class="page-title">药箱</view>
+      <view class="page-subtitle">只记录你确认过的内容</view>
+    </view>
+    <view class="text-button settings-button" bindtap="openSettings" role="button" aria-label="打开设置">
+      <image class="button-icon" src="/assets/ui/gear.png" mode="aspectFit" /><text>设置</text>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !error}}" class="toolbar">
+    <view class="search-wrap">
+      <image class="search-symbol" src="/assets/ui/search.png" mode="aspectFit" />
+      <input
+        class="search-input"
+        value="{{query}}"
+        placeholder="搜索我的药箱"
+        maxlength="40"
+        bindinput="onSearch"
+        confirm-type="search"
+      />
+      <button wx:if="{{query}}" class="clear-button" bindtap="clearSearch" aria-label="清除搜索">×</button>
+    </view>
+    <view class="add-button" bindtap="addMedicine" role="button"><image src="/assets/ui/plus-circle.png" mode="aspectFit" /><text>添加药盒</text></view>
+  </view>
+
+  <scroll-view wx:if="{{profiles.length > 1 && !loading && !error}}" class="profile-scroll" scroll-x enable-flex>
+    <button class="filter-chip {{selectedProfileId === 'all' ? 'active' : ''}}" data-id="all" bindtap="selectProfile">全部成员</button>
+    <button
+      wx:for="{{profiles}}"
+      wx:key="id"
+      class="filter-chip {{selectedProfileId === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="selectProfile"
+    >{{item.name}}</button>
+  </scroll-view>
+
+  <view wx:if="{{!loading && !error}}" class="expiry-filters">
+    <button class="filter-chip {{selectedExpiry === 'all' ? 'active' : ''}}" data-id="all" bindtap="selectExpiry">全部 {{expiryCounts.all}}</button>
+    <button class="filter-chip {{selectedExpiry === 'expiring' ? 'active' : ''}}" data-id="expiring" bindtap="selectExpiry">即将到期 {{expiryCounts.expiring}}</button>
+    <button class="filter-chip {{selectedExpiry === 'expired' ? 'active' : ''}}" data-id="expired" bindtap="selectExpiry">已到期 {{expiryCounts.expired}}</button>
+  </view>
+  <view wx:if="{{loading}}" class="loading-list">
+    <view class="loading-card"></view>
+    <view class="loading-card"></view>
+    <view class="loading-card"></view>
+  </view>
+
+  <view wx:elif="{{error}}" class="card empty">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">暂时没加载出来</view>
+    <view class="empty-copy">{{error}}</view>
+    <button class="secondary-button" bindtap="retry">重新加载</button>
+  </view>
+
+  <view wx:elif="{{!allCards.length}}" class="card empty cabinet-empty">
+    <view class="empty-symbol">药</view>
+    <view class="empty-title">{{archivedCards.length ? '目前没有在用的药盒' : '还没有药盒'}}</view>
+    <view class="empty-copy">{{archivedCards.length ? '已移除的药盒保留在下方，需要时可以恢复。' : '先记录药名和有效期，通常不到45秒。'}}</view>
+    <button class="primary-button" bindtap="addMedicine">{{archivedCards.length ? '添加新药盒' : '添加第一盒药'}}</button>
+  </view>
+
+  <view wx:elif="{{!cards.length}}" class="card empty cabinet-empty">
+    <view class="empty-symbol">⌕</view>
+    <view class="empty-title">{{query ? '没找到“' + query + '”' : '没有符合筛选的药盒'}}</view>
+    <view class="empty-copy">试试其他药名，或清除全部筛选。</view>
+    <button class="secondary-button" bindtap="clearFilters">清除筛选</button>
+  </view>
+
+  <view wx:else class="medicine-list">
+    <view
+      wx:for="{{cards}}"
+      wx:key="id"
+      class="medicine-card card"
+      data-id="{{item.id}}"
+      bindtap="openMedicine"
+      role="button"
+      aria-label="查看{{item.name}}，{{item.status}}"
+    >
+      <view class="medicine-head">
+        <view class="medicine-icon {{item.photoUrl ? 'has-photo' : ''}}">
+          <image
+            wx:if="{{item.photoUrl}}"
+            class="medicine-photo"
+            src="{{item.photoUrl}}"
+            mode="aspectFill"
+            lazy-load
+            data-id="{{item.id}}"
+            binderror="onCardPhotoError"
+            aria-hidden="true"
+          />
+          <image wx:else class="medicine-default-icon" src="/assets/ui/medkit.png" mode="aspectFit" aria-hidden="true" />
+        </view>
+        <view class="medicine-identity">
+          <view class="medicine-name">{{item.name}}</view><view class="medicine-member">{{item.specification}}</view>
+          <view wx:if="{{profiles.length > 1}}" class="medicine-member">{{item.profileName}}</view>
+        </view>
+        <view class="status-pill {{item.statusClass}}">{{item.status}}</view>
+      </view>
+      <view class="medicine-stats">
+        <view class="medicine-stat">
+          <view class="stat-label">预计余量</view>
+          <view class="stat-value">{{item.estimateText}}</view>
+          <view class="stat-copy">{{item.depletionText}}</view>
+        </view>
+        <view class="medicine-stat">
+          <view class="stat-label">管理到期</view>
+          <view class="stat-value">{{item.expiryText}}</view>
+          <view class="stat-copy">{{item.expiryBasisText}}</view>
+          <view class="stat-copy next-copy">{{item.nextText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !error && archivedCards.length}}" class="archived-section">
+    <view class="archived-head" bindtap="toggleArchived" role="button" aria-expanded="{{archivedExpanded}}">
+      <view>
+        <view class="archived-title">已移除药盒</view>
+        <view class="archived-copy">不会生成任务或提醒，历史仍保留</view>
+      </view>
+      <view class="archived-count">{{archivedCards.length}} · {{archivedExpanded ? '收起' : '展开'}}</view>
+    </view>
+    <view wx:if="{{archivedExpanded}}" class="archived-list">
+      <view wx:for="{{archivedCards}}" wx:key="id" class="archived-card">
+        <view class="archived-info">
+          <view class="archived-name">{{item.name}}</view><view class="archived-meta">{{item.specification}}</view>
+          <view class="archived-meta">{{item.profileName}} · 原记录到期 {{item.expiryText}}</view>
+        </view>
+        <view class="archived-actions">
+          <button
+            class="archived-button restore"
+            data-id="{{item.id}}"
+            bindtap="restoreArchived"
+            loading="{{busyArchivedId === item.id}}"
+            disabled="{{busyArchivedId && busyArchivedId !== item.id}}"
+          >恢复</button>
+          <button
+            class="archived-button delete"
+            data-id="{{item.id}}"
+            bindtap="deleteArchived"
+            disabled="{{busyArchivedId}}"
+          >永久删除</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

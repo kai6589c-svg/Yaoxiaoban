@@ -1,0 +1,41 @@
+# Dependencies and generated output (at any depth)
+node_modules/
+coverage/
+miniprogram_npm/
+dist/
+output/
+tmp/
+artifacts/
+.e2e-project/
+
+# Local settings and temporary files
+.DS_Store
+project.private.config.json
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Secrets; commit sanitized examples only
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+credentials.*.json
+secrets.json
+secrets.*.json
+!credentials.example.json
+!secrets.example.json
+
+# Generated deployment configuration; edit deployment.local.json instead
+deployment.local.json
+project.config.json
+cloudbaserc.json
+miniprogram/config/runtime.ts
+.github-public-scan/

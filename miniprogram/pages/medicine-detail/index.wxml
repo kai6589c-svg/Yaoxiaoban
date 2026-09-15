@@ -1,0 +1,149 @@
+<template name="stock">
+    <view class="summary-card card">
+      <view class="summary-label">预计余量</view>
+      <view class="summary-main {{view.stockRisk}}">
+        <view class="stock-primary"><view class="summary-value">{{view.stockValue}}</view><view class="stock-caption">{{view.stockCaption}}</view></view>
+        <view class="summary-depletion"><block wx:if="{{view.shortageDate}}"><view class="shortage-date">{{view.shortageDate}}</view><view>{{view.stockRisk === 'danger' ? '余量已不足' : '预计不足'}}</view></block><text wx:else>{{view.depletionText}}</text></view>
+      </view>
+      <view class="estimate-basis"><view>{{view.stockBasis}}</view><view wx:if="{{view.snapshotText}}">上次盘点 · {{view.snapshotText}}</view></view>
+      <button class="section-action" bindtap="inventory" hover-class="detail-pressed">
+        <text class="section-card-title">{{view.canTrackQuantity ? '盘点余量' : '设置单位后盘点'}}</text><text class="section-arrow">›</text>
+      </button>
+    </view>
+
+</template>
+<template name="expiry">
+    <view class="card inventory-card">
+
+      <view class="expiry-link"><text>药盒与有效期</text><text class="expiry-status {{view.expiryStatusClass}}">{{view.expiryStatusText}}</text></view>
+      <view class="expiry-panel">
+        <view class="expiry-column">
+          <view class="expiry-label">包装标注</view>
+          <view class="expiry-value">{{view.expiryText}}</view>
+        </view>
+        <view class="expiry-column">
+          <view class="expiry-label">管理到期</view>
+          <view class="expiry-value">{{view.effectiveExpiryText}}</view>
+        </view>
+      </view>
+      <view class="info-hint expiry-meta"><text>开封日期</text><text>{{view.openingValue}}</text></view>
+      <view class="info-hint expiry-meta"><text>到期规则</text><text>{{view.expirySourceText}}</text></view>
+    </view>
+
+</template>
+<template name="plan">
+    <view class="card plan-card">
+      <view class="section-card-title">服药计划</view>
+      <view class="feature-row">
+        <view class="feature-icon"><image src="/assets/ui/clock.png" mode="aspectFit" /></view>
+        <view class="feature-body">
+          <view class="feature-title">{{view.nextText}}</view>
+          <view class="feature-copy">{{view.planText}}</view>
+        </view>
+        <button class="row-link" hover-class="detail-pressed" bindtap="edit">{{view.hasPlan ? '编辑计划' : '设置计划'}} ›</button>
+      </view>
+      <view class="feature-row" bindtap="openReminders" hover-class="detail-pressed" role="button" aria-label="设置提醒">
+        <view class="feature-icon"><image src="/assets/ui/bell.png" mode="aspectFit" /></view>
+        <view class="feature-body">
+          <view class="feature-title">{{view.calendarText}}</view>
+          <view class="feature-copy">{{view.reminderCoverage}}</view>
+          <view class="feature-copy">微信提醒按类别单独授权，一次授权只对应下一条</view>
+        </view>
+        <text class="row-link">{{view.reminderAction}} ›</text>
+      </view>
+    </view>
+
+
+</template>
+<template name="usage">
+    <view wx:if="{{view.recordLabel}}" class="card usage-card">
+      <view class="usage-entry"><view class="feature-body"><view class="section-card-title">{{view.mode === 'as_needed' ? '记录使用' : '计划外使用'}}</view><view class="feature-copy">临时服药或计划之外的使用记录，可撤销</view></view><button class="usage-record" disabled="{{busy}}" bindtap="recordExtra" hover-class="detail-pressed">{{view.canTrackQuantity ? '记录' : '设置单位'}}<text class="section-arrow">›</text></button></view>
+      <view wx:for="{{view.recentUsage}}" wx:key="id" class="usage-row"><text>{{item.text}}</text><button class="row-link" hover-class="detail-pressed" disabled="{{busy}}" data-id="{{item.id}}" bindtap="undoUsage">撤销</button></view>
+    </view>
+</template>
+<view class="page subpage detail-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="药盒详情" />
+  <view wx:if="{{photoSyncText}}" class="notice warning" bindtap="openPendingSaves">{{photoSyncText}} · 查看待同步任务</view>
+  <view wx:if="{{loading}}" class="loading-copy">正在加载…</view>
+  <view wx:elif="{{error}}" class="card empty">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">没有加载成功</view>
+    <view class="empty-copy">{{error}}</view>
+    <button class="secondary-button" bindtap="loadData">重新加载</button>
+  </view>
+  <block wx:elif="{{view}}">
+    <view wx:if="{{savedNotice}}" class="card saved-notice"><view class="section-card-title">药盒信息已保存</view><view>{{view.calendarText}}</view><button wx:if="{{view.hasFixedPlan}}" class="row-link" bindtap="openReminders">{{view.reminderAction}} ›</button></view>
+<view wx:if="{{!loading && view}}" class="reminder-health {{reminderHealth.level}}" bindtap="openReminders">
+  <view class="health-title">{{reminderHealth.title}}</view>
+  <view wx:if="{{reminderHealth.next}}">{{reminderHealth.next}}</view>
+  <view class="health-detail">{{reminderHealth.detail}}</view>
+</view>
+
+    <view class="detail-head card">
+      <view wx:if="{{view.photoUrl}}" class="detail-photo" hover-class="detail-pressed" bindtap="previewPhoto" role="button" aria-label="查看药盒照片大图"><image src="{{view.photoUrl}}" mode="aspectFill" lazy-load="{{true}}" bindload="onPhotoLoad" binderror="onPhotoLoadError" /><text>查看大图</text></view>
+      <view wx:else class="medicine-hero-icon"><image src="/assets/ui/medkit.png" mode="aspectFit" /></view>
+      <view class="detail-identity">
+        <view wx:if="{{view.photoUrl}}" class="photo-saved">照片已保存</view>
+        <view class="detail-name">{{view.name}}</view>
+        <view class="detail-profile">{{view.profileName}} · {{view.specification}}</view>
+      </view>
+      <view class="edit-button" bindtap="edit" role="button" hover-class="detail-pressed">编辑</view>
+    </view>
+
+    <view wx:if="{{view.isExpired}}" class="expiry-alert card">
+      <view class="expiry-alert-icon"><image src="/assets/ui/warning-red.png" mode="aspectFit" /></view>
+      <view class="expiry-alert-body">
+        <view class="expiry-alert-title">{{view.expiryNoticeTitle}}</view>
+        <view class="expiry-alert-copy">{{view.expiryNoticeCopy}}</view>
+        <view class="expiry-alert-actions">
+          <button class="expiry-alert-button" bindtap="edit">核对日期</button>
+          <button class="expiry-alert-button danger" disabled="{{busy}}" bindtap="archive">移除药盒</button>
+        </view>
+      </view>
+    </view>
+
+<block wx:if="{{view.mode === 'expiry_only'}}"><template is="expiry" data="{{view: view, busy: busy}}" />
+<template is="stock" data="{{view: view, busy: busy}}" />
+</block>
+<block wx:elif="{{view.mode === 'as_needed'}}"><template is="usage" data="{{view: view, busy: busy}}" />
+<template is="stock" data="{{view: view, busy: busy}}" />
+<template is="expiry" data="{{view: view, busy: busy}}" />
+</block>
+<block wx:else><template is="plan" data="{{view: view, busy: busy}}" />
+<template is="stock" data="{{view: view, busy: busy}}" />
+<template is="expiry" data="{{view: view, busy: busy}}" />
+<template is="usage" data="{{view: view, busy: busy}}" />
+</block>
+    <view wx:if="{{view.oldCalendarText}}" class="card old-calendar-note">{{view.oldCalendarText}}</view>
+    <view wx:if="{{view.note}}" class="section-title">我的备注</view>
+    <view wx:if="{{view.note}}" class="card note-card">{{view.note}}</view>
+
+    <view class="card action-list">
+      <view class="section-card-title">记录</view>
+      <view class="list-action" bindtap="history" role="button" hover-class="detail-pressed">
+        <view class="feature-icon"><image src="/assets/ui/clipboard.png" mode="aspectFit" /></view><view class="feature-body"><text>最近服药记录</text><view class="feature-copy">查看服药历史</view></view><text class="section-arrow">›</text>
+      </view>
+      <view class="list-action" bindtap="edit" role="button" hover-class="detail-pressed">
+        <view class="feature-icon"><image src="/assets/ui/edit.png" mode="aspectFit" /></view><view class="feature-body"><text>编辑药盒</text><view class="feature-copy">修改药品与计划信息</view></view><text class="section-arrow">›</text>
+      </view>
+    </view>
+    <view class="danger-zone">
+      <view class="danger-section-label">危险操作</view>
+      <button class="archive-button" disabled="{{busy}}" bindtap="archive" hover-class="detail-pressed"><image src="/assets/ui/archive.png" mode="aspectFit" /><view class="feature-body"><view>移除药盒</view><view class="feature-copy">停止当前药盒，保留历史记录</view></view><text class="section-arrow">›</text></button>
+      <button class="delete-button" disabled="{{busy}}" bindtap="deletePermanently" hover-class="danger-pressed"><view class="feature-body"><view>删除药盒及所有记录</view><view class="feature-copy">永久删除药盒和历史数据，无法恢复</view></view><text class="section-arrow">›</text></button>
+    </view>
+  </block>
+</view>
+<reminder-settings open="{{reminderOpen}}" text-scale="{{textScale || 1}}" dose-copy="{{view ? view.planText : ''}}" expiry-copy="{{view ? view.expiryReminderCopy : ''}}" shortage-copy="{{view ? view.shortageReminderCopy : ''}}" has-fixed-plan="{{view.hasFixedPlan}}" calendar-text="{{view ? view.calendarText : ''}}" busy="{{busy}}" dose-status="{{doseReminderStatus}}" expiry-status="{{expiryReminderStatus}}" shortage-status="{{shortageReminderStatus}}" bindclose="closeReminders" bindwritecalendar="addCalendar" bindrequest="requestWechatReminder" />
+
+<view wx:if="{{recordOpen}}" class="usage-backdrop" catchtap="closeRecord" catchtouchmove="noop">
+  <view class="usage-sheet" catchtap="noop" aria-role="dialog" aria-modal="true" aria-label="记录使用">
+    <view class="section-card-title">{{view.recordLabel}}</view>
+    <view class="usage-field"><text>使用数量（{{view.unit}}）</text><input type="digit" value="{{recordQuantity}}" bindinput="onRecordQuantity" disabled="{{busy}}" /></view>
+    <view class="usage-field"><text>使用日期</text><picker mode="date" value="{{recordDate}}" end="{{today}}" bindchange="onRecordDate" disabled="{{busy}}"><view>{{recordDate}} ›</view></picker></view>
+    <view class="usage-field"><text>使用时间</text><picker mode="time" value="{{recordTime}}" bindchange="onRecordTime" disabled="{{busy}}"><view>{{recordTime}} ›</view></picker></view>
+    <view class="feature-copy">时间按中国北京时间（UTC+8）记录。</view>
+    <view wx:if="{{recordError}}" class="usage-error">{{recordError}}</view>
+    <view class="usage-actions"><button class="secondary-button" disabled="{{busy}}" bindtap="closeRecord">取消</button><button class="primary-button" loading="{{busy}}" disabled="{{busy}}" bindtap="saveUsage">保存记录</button></view>
+  </view>
+</view>

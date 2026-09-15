@@ -1,0 +1,107 @@
+.history-page {
+  padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+}
+
+.history-subtitle {
+  margin: 5rpx 0 34rpx;
+  color: var(--muted);
+  font-size: calc(23rpx * var(--text-scale, 1));
+  text-align: center;
+}
+
+.loading-copy {
+  padding: 100rpx 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.history-empty {
+  margin-top: 30rpx;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.log-row {
+  display: flex;
+  min-height: 112rpx;
+  align-items: center;
+  gap: 18rpx;
+  padding: 22rpx 25rpx;
+}
+
+.log-icon {
+  display: flex;
+  width: 64rpx;
+  height: 64rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 21rpx;
+  background: var(--brand-soft);
+}
+
+.log-icon.extra {
+  background: #fff6e5;
+}
+
+.log-icon.skipped {
+  background: var(--danger-soft);
+}
+
+.log-icon image {
+  width: 38rpx;
+  height: 38rpx;
+}
+
+.log-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.log-title {
+  overflow: hidden;
+  font-size: calc(26rpx * var(--text-scale, 1));
+  font-weight: 700;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-copy {
+  margin-top: 5rpx;
+  color: var(--muted);
+  font-size: calc(21rpx * var(--text-scale, 1));
+  line-height: 1.4;
+}
+
+.undo-button {
+  width: 86rpx;
+  min-width: 78rpx;
+  max-width: 86rpx;
+  min-height: 58rpx;
+  flex-shrink: 0;
+  color: var(--brand-deep);
+  font-size: calc(23rpx * var(--text-scale, 1));
+  font-weight: 650;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.history-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  margin-bottom: 24rpx;
+  line-height: 1.7;
+}
+.log-title {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.log-row {
+  flex-wrap: wrap;
+}

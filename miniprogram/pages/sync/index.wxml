@@ -1,0 +1,21 @@
+<view class="page subpage sync-page">
+  <app-nav title="待同步任务" />
+  <view class="hint">照片和记录暂存在这台设备。恢复网络或重新打开小程序后会继续同步。</view>
+  <view wx:if="{{error}}" class="notice">{{error}}</view>
+  <view wx:if="{{!jobs.length && !intakes.length}}" class="empty">没有待同步任务</view>
+  <view wx:for="{{jobs}}" wx:key="id" class="card">
+    <view class="name">{{item.name}}</view>
+    <view class="message">{{item.message}}</view>
+    <button wx:if="{{!item.terminal}}" disabled="{{!!busy}}" loading="{{busy === item.id}}" data-id="{{item.id}}" bindtap="retryJob">继续同步</button>
+    <button wx:if="{{item.medicationId}}" data-id="{{item.medicationId}}" bindtap="openMedicine">查看药盒</button>
+    <button wx:if="{{item.canDiscard}}" disabled="{{!!busy}}" data-id="{{item.id}}" bindtap="discardJob">移除任务</button>
+  </view>
+
+<view wx:for="{{intakes}}" wx:key="id" class="card">
+  <view class="name">{{item.name}} · 服药记录</view>
+  <view class="message">{{item.message}}</view>
+  <button wx:if="{{!item.terminal}}" data-id="{{item.id}}" disabled="{{!!busy}}" loading="{{busy === item.id}}" bindtap="retryIntake">继续同步记录</button>
+  <button wx:else data-id="{{item.id}}" bindtap="dismissIntake">核对后移除任务</button>
+</view>
+
+</view>

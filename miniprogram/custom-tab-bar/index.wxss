@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.custom-tabbar {
+  position: fixed;
+  z-index: 200;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  height: calc(112rpx + env(safe-area-inset-bottom));
+  align-items: flex-start;
+  padding: 8rpx 28rpx env(safe-area-inset-bottom);
+  border-top: 1rpx solid rgba(229, 233, 227, 0.9);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 -10rpx 32rpx rgba(28, 49, 37, 0.045);
+}
+
+.tab-item {
+  display: flex;
+  height: 96rpx;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rpx;
+  margin: 0;
+  padding: 9rpx 0 0;
+  color: #7a8078;
+  background: transparent;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+    sans-serif;
+  font-size: 23rpx;
+  line-height: 1;
+}
+
+.tab-item::after {
+  border: 0;
+}
+
+.tab-item.active {
+  color: #167a50;
+  font-weight: 700;
+}
+
+.tab-icon {
+  width: 48rpx;
+  height: 48rpx;
+  flex-shrink: 0;
+}
+
+.tab-label {
+  display: block;
+  height: 31rpx;
+  line-height: 31rpx;
+  white-space: nowrap;
+}

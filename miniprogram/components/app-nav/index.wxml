@@ -1,0 +1,7 @@
+<view class="app-nav {{spacer ? 'spacer-only' : ''}}" style="padding-top: {{top}}px; min-height: {{top + rowHeight}}px;">
+  <view wx:if="{{!spacer}}" class="app-nav-row" style="min-height: {{rowHeight}}px;">
+    <view class="app-nav-back" bindtap="goBack" role="button" aria-label="返回" hover-class="app-nav-back-active">‹</view>
+    <view class="app-nav-title" style="left: {{reserve}}px; right: {{reserve}}px;">{{title}}</view>
+    <view class="app-nav-spacer" aria-hidden="true"></view>
+  </view>
+</view>

@@ -1,0 +1,10 @@
+{
+  "deploymentMode": "demo",
+  "appId": "touristappid",
+  "cloudEnvId": "",
+  "subscriptionTemplates": {
+    "dose": "",
+    "expiry": "",
+    "lowStock": ""
+  }
+}

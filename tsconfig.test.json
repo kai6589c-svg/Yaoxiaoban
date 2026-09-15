@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals", "miniprogram-api-typings"],
+    "lib": ["ES2020", "DOM"]
+  },
+  "include": ["tests/**/*.ts", "miniprogram/core/**/*.ts", "vitest.config.ts"]
+}

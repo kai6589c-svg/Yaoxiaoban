@@ -1,0 +1,166 @@
+<view class="page subpage privacy-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="隐私政策" />
+  <view class="policy-head">
+    <view class="policy-kicker">药小伴 · 工具版</view>
+    <view class="policy-title">隐私政策</view>
+    <view class="policy-meta">版本 {{version}} · {{effectiveDate}}生效</view>
+  </view>
+
+  <view class="summary-card card">
+    <view class="summary-title">先说结论</view>
+    <view class="summary-row">
+      <text class="summary-mark" aria-hidden="true">✓</text>
+      <text>只处理完成药品记录、余量估算与提醒所必需的信息。</text>
+    </view>
+    <view class="summary-row">
+      <text class="summary-mark" aria-hidden="true">✓</text>
+      <text>不收集身份证、诊断、手机号或精确生日。</text>
+    </view>
+    <view class="summary-row">
+      <text class="summary-mark" aria-hidden="true">✓</text>
+      <text>不出售数据，不用于广告画像，不生成医疗建议。</text>
+    </view>
+    <view class="summary-row">
+      <text class="summary-mark" aria-hidden="true">✓</text>
+      <text>你可随时修改、导出或删除自己的数据。</text>
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">01</view>
+    <view class="policy-heading">适用范围与运营者</view>
+    <view class="policy-paragraph">
+      本政策适用于“药小伴”微信小程序工具版。小程序页面所示开发者为个人信息处理者，负责本产品范围内的个人信息处理。如你不同意本政策，药小伴不会保存你的药品或服药信息。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">02</view>
+    <view class="policy-heading">我们处理哪些信息</view>
+
+    <view class="policy-subheading">2.1 账号与同意信息</view>
+    <view class="policy-paragraph">
+      启用云端服务时，微信会向服务端提供用于区分账号的小程序用户标识。我们还会记录你同意的隐私政策版本与时间，用于确认服务权限。我们不要求你提供微信昵称、头像或手机号。
+    </view>
+
+    <view class="policy-subheading">2.2 你主动记录的敏感健康信息</view>
+    <view class="policy-paragraph">
+      包括成员称呼、关系与颜色标识；药名、规格、数量单位、有效期、开封日期、开封后期限、备注，以及你自愿拍摄或选择的药盒照片；服药时间、每次用量、重复日期、已服、未服、额外使用记录；盘点数量、时间与预计余量。这些内容可能反映健康状况，属于敏感个人信息，因此在首次保存前会单独征得你同意。药盒照片不是必填项。
+    </view>
+
+    <view class="policy-subheading">2.3 提醒与设置信息</view>
+    <view class="policy-paragraph">
+      包括到期提醒阈值、预计余量提醒阈值、日历隐私显示偏好、微信订阅授权结果，以及日历事件是否已添加或已失效的状态。微信订阅按具体模板和一次授权规则处理。
+    </view>
+
+    <view class="policy-subheading">2.4 必要的技术信息</view>
+    <view class="policy-paragraph">
+      为完成请求、防止重复操作、排查故障和保障安全，可处理请求标识、记录版本、操作时间、错误类型和必要的网络状态。生产日志不记录药名、剂量、备注或导出内容。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">03</view>
+    <view class="policy-heading">信息用于什么</view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>为你建立私人药箱和家庭成员档案。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>显示药品有效期、开封期限和待处理风险。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>按你设置的固定计划计算预计余量与预计不足时间。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>在你主动选择时，向手机日历添加提醒；微信提醒按服药、到期、余量不足分别授权，未配置的类型保持待配置。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>保存设置、导出你的数据、响应删除请求，以及保护账号与服务安全。</text></view>
+    <view class="policy-paragraph paragraph-gap">
+      药小伴不利用这些信息推荐剂量、判断疗程、诊断疾病、决定是否续药，也不用于广告定向或商品营销。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">04</view>
+    <view class="policy-heading">设备能力与第三方服务</view>
+
+    <view class="policy-subheading">手机日历</view>
+    <view class="policy-paragraph">
+      只有在你点击“添加到手机日历”后，才调用微信提供的日历能力。药名和剂量默认不写入日历标题；你可在设置中主动改为详细显示。手机日历事件由微信和设备系统处理。受接口限制，小程序无法替你修改或删除已添加的事件。
+    </view>
+
+    <view class="policy-subheading">相机与相册</view>
+    <view class="policy-paragraph">
+      只有在你点击“拍照或从相册选择”后，才调用微信提供的相机或相册能力。所选图片会先在本机压缩，并仅作为对应药盒的识别缩略图保存；药小伴不从照片推断药名、剂量、疾病或其他医疗信息。你可以不添加照片，也可以在编辑药盒时移除或替换。
+    </view>
+
+    <view class="policy-subheading">微信订阅消息</view>
+    <view class="policy-paragraph">
+      只有你在具体药盒上点击对应入口时，才请求服药时间、到期或余量不足的订阅。当前已配置模板为一次性授权；长期订阅资格尚未核验前，不把一次授权当作持续发送权限。手机日历提醒不属于微信订阅消息，需由你主动设置并添加；未设置不影响核心数据与小程序内风险卡片。
+    </view>
+
+    <view class="policy-subheading">剪贴板</view>
+    <view class="policy-paragraph">
+      只有在你确认“导出并复制数据”后，才把导出文本写入剪贴板。剪贴板由设备系统管理，其他应用可能在系统允许的情况下读取，请导出后及时保存并清理。
+    </view>
+
+    <view class="policy-subheading">微信与云开发</view>
+    <view class="policy-paragraph">
+      正式环境可使用微信小程序与境内云开发服务完成身份识别、数据存储、云函数和定时任务。这些服务提供方会按其公布的规则处理必要信息。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">05</view>
+    <view class="policy-heading">存储、保留与安全</view>
+    <view class="policy-paragraph">
+      未配置云环境的本机演示版将数据和可选药盒照片保存在微信小程序本地；正式版将业务数据和可选药盒照片保存在中国大陆云环境。数据保留到你移除照片、删除对应药盒、删除账号，或超过实现上述目的所必需的时间。未完成的临时照片上传会按清理策略删除。
+    </view>
+    <view class="policy-paragraph paragraph-gap">
+      我们通过账号隔离、服务端同意门禁、照片对象归属和限时访问地址、版本冲突检测、重复请求防护、最小化日志和后台删除任务保护数据。但任何网络服务都无法承诺绝对安全；请保护好你的微信账号和导出文件。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">06</view>
+    <view class="policy-heading">对外提供、转移与公开</view>
+    <view class="policy-paragraph">
+      我们不出售你的个人信息，不向广告主提供药品或服药记录，不公开披露这些内容。只有在完成你主动请求的功能、履行法定义务、保护人身或财产安全，或取得你的另行同意时，才在必要范围内处理或提供。当前工具版不把数据发送到境外。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">07</view>
+    <view class="policy-heading">你如何管理数据</view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>在药箱和成员页面查看、修改或移除对应记录。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>在设置页调整提醒和隐私显示偏好。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>在设置页生成并复制结构化记录导出；为避免在剪贴板泄露，导出文本不包含照片文件本身或内部云存储地址。</text></view>
+    <view class="bullet-row"><text class="bullet" aria-hidden="true">•</text><text>在设置页删除账号和全部数据。提交后账号访问和提醒立即停用；云端文件和记录由后台继续清理，并显示实际处理状态。</text></view>
+    <view class="policy-paragraph paragraph-gap">
+      如你撤回对敏感健康信息处理的同意，药小伴将无法继续提供药箱、余量估算与提醒功能。你可通过“删除账号与全部数据”撤回同意并终止处理。删除账号不会自动删除手机系统日历中已有的事件，需要你自行清理。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">08</view>
+    <view class="policy-heading">未成年人信息</view>
+    <view class="policy-paragraph">
+      药小伴的账号操作人应为成年人。成年人可以为家庭成员代为记录。当你为未满 14 周岁的成员记录信息时，应当是其监护人，或已获得其监护人同意。我们不收集成员的精确年龄，因此会在添加“子女”成员时要求操作人主动确认监护授权。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">09</view>
+    <view class="policy-heading">政策更新</view>
+    <view class="policy-paragraph">
+      我们可能因产品功能、服务提供方或法律要求变化而更新本政策。如变化会对你的权益产生重大影响，我们将通过小程序页面显著告知，并在需要时重新征得同意。你可在页首查看当前版本和生效日期。
+    </view>
+  </view>
+
+  <view class="policy-section">
+    <view class="section-number">10</view>
+    <view class="policy-heading">联系与投诉</view>
+    <view class="policy-paragraph">
+      如对本政策、个人信息处理或数据权利有疑问，可通过微信小程序详情页的“反馈与投诉”联系开发者。我们会核验请求人身份，并在法律规定的期限内答复。
+    </view>
+  </view>
+
+  <view class="medical-note">
+    <view class="medical-title">重要提醒</view>
+    <view>药小伴是个人记录工具，不代替医生、药师、药品说明书或紧急医疗服务。预计余量只是根据你的盘点和计划计算，不表示实际已服用。</view>
+  </view>
+
+  <button class="primary-button back-button" bindtap="goBack" aria-label="返回上一页">返回</button>
+</view>

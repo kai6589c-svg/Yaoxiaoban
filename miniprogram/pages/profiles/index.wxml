@@ -1,0 +1,144 @@
+<view class="page subpage profiles-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="家庭成员" />
+  <view class="page-head">
+    <view>
+      <view class="page-title">家庭成员</view>
+      <view class="page-subtitle">仅在当前微信账号内代为记录</view>
+    </view>
+    <button class="text-button" bindtap="openAdd" aria-label="添加家庭成员">添加</button>
+  </view>
+
+  <view class="privacy-note">
+    只需要称呼和关系，不收集身份证、疾病诊断、手机号或准确生日。
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-card card" aria-live="polite">正在加载成员…</view>
+
+  <view wx:elif="{{loadFailed}}" class="empty card" aria-live="assertive">
+    <view class="empty-symbol" aria-hidden="true">!</view>
+    <view class="empty-title">成员资料暂时没加载出来</view>
+    <view class="empty-copy">请检查网络后重试。</view>
+    <button class="primary-button" bindtap="loadProfiles">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view wx:if="{{profiles.length}}" class="profile-list">
+      <view wx:for="{{profiles}}" wx:key="id" class="profile-card card">
+        <view class="profile-main">
+          <view class="profile-avatar" style="background: {{item.color}};" aria-hidden="true">{{item.initial}}</view>
+          <view class="profile-copy">
+            <view class="profile-name">{{item.name}}</view>
+            <view class="profile-meta">
+              {{item.relationLabel}}
+              <text wx:if="{{item.medicationCount}}"> · {{item.medicationCount}} 种药品</text>
+            </view>
+          </view>
+        </view>
+        <view class="profile-actions">
+          <button class="profile-action" data-id="{{item.id}}" bindtap="openEdit" aria-label="编辑{{item.name}}">编辑</button>
+          <button
+            class="profile-action archive-action"
+            data-id="{{item.id}}"
+            disabled="{{profiles.length <= 1 || archivingId !== ''}}"
+            bindtap="archiveProfile"
+            aria-label="移除{{item.name}}"
+          >
+            移除
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="empty card">
+      <view class="empty-symbol" aria-hidden="true">人</view>
+      <view class="empty-title">还没有可用成员</view>
+      <view class="empty-copy">添加一位成员后，才能为他记录药品。</view>
+      <button class="primary-button" bindtap="openAdd">添加成员</button>
+    </view>
+
+    <view wx:if="{{archivedProfiles.length}}">
+      <view class="section-title">已移除</view>
+      <view class="archived-card card">
+        <view wx:for="{{archivedProfiles}}" wx:key="id" class="archived-row">
+          <view class="archived-dot" style="background: {{item.color}};" aria-hidden="true"></view>
+          <view class="archived-name">{{item.name}}</view>
+          <view class="archived-state">已移除</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<view
+  wx:if="{{editorOpen}}"
+  class="modal-backdrop"
+  catchtap="closeEditor"
+  catchtouchmove="noop"
+  aria-role="dialog"
+  aria-modal="true"
+  aria-label="{{editorId ? '编辑成员' : '添加成员'}}"
+>
+  <view class="editor-sheet" catchtap="noop">
+    <view class="sheet-kicker">{{editorId ? '编辑资料' : '新成员'}}</view>
+    <view class="sheet-title">{{editorId ? '编辑成员' : '添加成员'}}</view>
+
+    <view class="field-label">称呼</view>
+    <input
+      class="name-input"
+      value="{{editorName}}"
+      maxlength="10"
+      focus="{{editorOpen}}"
+      bindinput="onNameInput"
+      placeholder="例如：妈妈"
+      aria-label="成员称呼，最多10个字"
+    />
+
+    <view class="field-label">与我的关系</view>
+    <view class="chip-list" aria-label="选择成员关系">
+      <button
+        wx:for="{{relationOptions}}"
+        wx:key="value"
+        class="relation-chip {{editorRelation === item.value ? 'selected' : ''}}"
+        data-relation="{{item.value}}"
+        bindtap="chooseRelation"
+        aria-label="{{item.label}}{{editorRelation === item.value ? '，已选择' : ''}}"
+      >
+        {{item.label}}
+      </button>
+    </view>
+
+    <view class="field-label">颜色标识</view>
+    <view class="color-list" aria-label="选择成员颜色">
+      <button
+        wx:for="{{colorOptions}}"
+        wx:key="value"
+        class="color-option {{editorColor === item.value ? 'selected' : ''}}"
+        style="background: {{item.value}};"
+        data-color="{{item.value}}"
+        bindtap="chooseColor"
+        aria-label="{{item.label}}{{editorColor === item.value ? '，已选择' : ''}}"
+      >
+        <text wx:if="{{editorColor === item.value}}" aria-hidden="true">✓</text>
+      </button>
+    </view>
+
+    <checkbox-group
+      wx:if="{{editorRelation !== 'self'}}"
+      bindchange="onAuthorizationChange"
+      aria-label="成员授权确认"
+    >
+      <label class="authorization-row">
+        <checkbox value="authorized" checked="{{authorizationConfirmed}}" color="#167A50" />
+        <text wx:if="{{editorRelation === 'child'}}">我确认自己是其监护人，或已获得其监护人同意</text>
+        <text wx:else>我确认已获得该成员授权</text>
+      </label>
+    </checkbox-group>
+
+    <view wx:if="{{formError}}" class="form-error" aria-live="assertive">{{formError}}</view>
+
+    <button class="primary-button save-button" disabled="{{saving}}" loading="{{saving}}" bindtap="saveProfile">
+      {{editorId ? '保存修改' : '添加成员'}}
+    </button>
+    <button class="sheet-cancel" disabled="{{saving}}" bindtap="closeEditor">取消</button>
+  </view>
+</view>

@@ -1,0 +1,330 @@
+<view class="page subpage form-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="{{editing ? '编辑药盒' : '添加药盒'}}" />
+
+  <view wx:if="{{loading}}" class="loading-copy">正在加载…</view>
+  <view wx:elif="{{error}}" class="card empty form-error">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">表单暂时没加载出来</view>
+    <view class="empty-copy">{{error}}</view>
+    <button class="secondary-button" bindtap="retry">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="intro-copy">
+      <view class="intro-bulb" aria-hidden="true"><view class="bulb-dot"></view></view>
+      <text>先记住最重要的信息：这是什么药，什么时候到期。</text>
+    </view>
+
+    <view id="essential-fields" class="card form-card essentials-card">
+      <view class="form-row">
+        <view class="form-label">所属成员</view>
+        <picker
+          class="form-value strong-value"
+          range="{{profiles}}"
+          range-key="name"
+          value="{{profileIndex}}"
+          bindchange="onProfileChange"
+        >
+          <view>{{profiles[profileIndex].name}} <text class="chevron">›</text></view>
+        </picker>
+      </view>
+
+      <view class="form-row name-row">
+        <view class="form-label required">药名</view>
+        <input
+          class="form-input"
+          value="{{name}}"
+          placeholder="例如：维生素D"
+          maxlength="40"
+          focus="{{nameFocus}}"
+          bindinput="onNameInput"
+        />
+      </view>
+      <view wx:if="{{fieldErrors.name}}" class="field-error">{{fieldErrors.name}}</view>
+      <view wx:if="{{suggestions.length && name}}" class="suggestion-row">
+        <button
+          wx:for="{{suggestions}}"
+          wx:key="*this"
+          class="suggestion"
+          data-name="{{item}}"
+          bindtap="chooseSuggestion"
+        >{{item}}</button>
+      </view>
+
+      <view class="form-row expiry-row">
+        <view class="field-stack">
+          <view class="form-label required">有效期</view>
+          <view class="precision-switch">
+            <button class="{{expiryPrecision === 'month' ? 'active' : ''}}" data-precision="month" bindtap="choosePrecision" aria-pressed="{{expiryPrecision === 'month'}}">年/月</button>
+            <button class="{{expiryPrecision === 'day' ? 'active' : ''}}" data-precision="day" bindtap="choosePrecision" aria-pressed="{{expiryPrecision === 'day'}}">年/月/日</button>
+          </view>
+        </view>
+        <picker
+          class="form-value strong-value {{!expiryValue ? 'form-placeholder' : ''}}"
+          mode="date"
+          fields="{{expiryPrecision === 'month' ? 'month' : 'day'}}"
+          value="{{pickerExpiry}}"
+          bindchange="onExpiryChange"
+        >
+          <view>{{expiryValue || '选择包装日期'}} <text class="chevron">›</text></view>
+        </picker>
+      </view>
+      <view wx:if="{{fieldErrors.expiryValue}}" class="field-error">{{fieldErrors.expiryValue}}</view>
+
+      <view wx:if="{{expiryPreviewTitle}}" class="expiry-preview {{expiryPreviewClass}}">
+        <view class="expiry-preview-title">{{expiryPreviewTitle}}</view>
+        <view class="expiry-preview-copy">{{expiryPreviewDetail}}</view>
+      </view>
+    </view>
+
+    <view class="card photo-card">
+      <view class="photo-copy">
+        <view class="section-card-title">药盒照片 <text>可选</text></view>
+        <view class="section-card-subtitle">拍下包装，下次在药箱里更容易认出来</view>
+        <view wx:if="{{photoSizeText}}" class="photo-size">{{photoChange === 'replace' ? '照片待保存' : '照片已保存'}} · {{photoSizeText}}</view>
+      </view>
+
+      <view wx:if="{{photoPreview}}" class="photo-preview-wrap">
+        <view wx:if="{{photoBusy}}" class="field-hint">正在压缩照片…</view>
+        <view class="photo-preview" bindtap="previewPhoto" role="button" aria-label="查看药盒大图">
+          <image
+            wx:if="{{!photoPreviewError}}"
+            src="{{photoPreview}}"
+            mode="aspectFill"
+            binderror="onPhotoPreviewError"
+          />
+          <view wx:else class="photo-fallback"><view class="camera-glyph"><view></view></view></view>
+        </view>
+        <view class="photo-actions">
+          <button class="photo-action" loading="{{photoBusy}}" disabled="{{photoBusy || saving || pendingSaveId}}" bindtap="choosePhoto">更换</button>
+          <button class="photo-action danger" disabled="{{photoBusy || saving || pendingSaveId}}" bindtap="removePhoto">移除</button>
+        </view>
+      </view>
+
+      <button wx:else class="photo-add" loading="{{photoBusy}}" disabled="{{photoBusy || saving || pendingSaveId}}" bindtap="choosePhoto">
+        <view class="camera-glyph" aria-hidden="true"><view></view></view>
+        <text>{{photoBusy ? '正在处理…' : '拍照或从相册选择'}}</text>
+      </button>
+    </view>
+
+    <view id="usage-fields" class="card usage-card">
+      <view class="section-card-title">使用方式</view>
+      <view class="usage-segmented">
+        <button
+          class="usage-segment {{usageMode === 'expiry_only' ? 'active' : ''}}"
+          data-mode="expiry_only"
+          bindtap="selectUsageMode"
+          aria-label="只管效期{{usageMode === 'expiry_only' ? '，已选择' : ''}}"
+        >只管效期</button>
+        <button
+          class="usage-segment {{usageMode === 'scheduled' ? 'active' : ''}}"
+          data-mode="scheduled"
+          bindtap="selectUsageMode"
+          aria-label="固定服用{{usageMode === 'scheduled' ? '，已选择' : ''}}"
+        >固定服用</button>
+        <button
+          class="usage-segment {{usageMode === 'as_needed' ? 'active' : ''}}"
+          data-mode="as_needed"
+          bindtap="selectUsageMode"
+          aria-label="按需使用{{usageMode === 'as_needed' ? '，已选择' : ''}}"
+        >按需使用</button>
+      </view>
+      <view class="safety-note">按医嘱或说明书填写，药小伴不判断剂量是否合适。</view>
+
+      <view wx:if="{{usageMode === 'expiry_only'}}" class="mode-empty-copy">
+        不生成服药任务，只在页面中提示有效期和已记录的余量。
+      </view>
+
+      <block wx:else>
+        <view class="form-row dose-row">
+          <view class="form-label">每次用量</view>
+          <view class="dose-control">
+            <button class="dose-step" bindtap="decreaseDose" aria-label="减少每次用量">−</button>
+            <input class="dose-input" type="digit" value="{{dose}}" bindinput="onDoseInput" />
+            <button class="dose-step" bindtap="increaseDose" aria-label="增加每次用量">＋</button>
+            <picker
+              class="unit-picker {{unitIndex < 0 ? 'form-placeholder' : ''}}"
+              disabled="{{unitLocked}}"
+              range="{{unitOptions}}"
+              value="{{unitIndex < 0 ? 0 : unitIndex}}"
+              bindchange="onUnitChange"
+            >
+              <view>{{unitIndex >= 0 ? unitOptions[unitIndex] : '单位'}} <text wx:if="{{!unitLocked}}" class="chevron">›</text></view>
+            </picker>
+          </view>
+        </view>
+        <view wx:if="{{fieldErrors.doseMilli}}" class="field-error no-indent">{{fieldErrors.doseMilli}}</view>
+        <view wx:if="{{fieldErrors.unit}}" class="field-error no-indent">{{fieldErrors.unit}}</view>
+        <view wx:if="{{unitLockText}}" class="inline-hint">{{unitLockText}}</view>
+
+        <block wx:if="{{usageMode === 'scheduled'}}">
+          <view class="form-row">
+            <view class="form-label">重复</view>
+            <view class="mini-segmented">
+              <button
+                class="mini-segment {{repeatKind === 'daily' ? 'active' : ''}}"
+                data-kind="daily"
+                bindtap="selectRepeatKind"
+              >每天</button>
+              <button
+                class="mini-segment {{repeatKind === 'weekly' ? 'active' : ''}}"
+                data-kind="weekly"
+                bindtap="selectRepeatKind"
+              >指定星期</button>
+            </view>
+          </view>
+          <view wx:if="{{repeatKind === 'weekly'}}" class="weekday-row">
+            <button
+              wx:for="{{weekdays}}"
+              wx:key="value"
+              class="weekday {{item.selected ? 'active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="toggleWeekday"
+            >{{item.label}}</button>
+          </view>
+
+          <view class="time-list">
+            <view wx:for="{{times}}" wx:key="index" class="form-row time-row">
+              <view class="form-label">{{index === 0 ? '计划服药时间' : '计划服药时间 ' + (index + 1)}}</view>
+              <picker
+                class="form-value strong-value"
+                mode="time"
+                value="{{item}}"
+                data-index="{{index}}"
+                bindchange="onTimeChange"
+              >
+                <view>{{item}} <text class="chevron">›</text></view>
+              </picker>
+              <button
+                wx:if="{{times.length > 1}}"
+                class="remove-time"
+                data-index="{{index}}"
+                bindtap="removeTime"
+                aria-label="删除这个时间"
+              >×</button>
+            </view>
+            <button class="add-time" bindtap="addTime">＋ 添加一个时间</button>
+          </view>
+          <view class="inline-hint">计划按中国北京时间（UTC+8）记录。保存计划不会自动开启通知；保存后可分别申请微信一次性提醒或添加手机日历。</view>
+        </block>
+
+        <view class="option-row plan-date-option" bindtap="togglePlanDates" role="button" aria-label="计划日期，{{planDatesOpen ? '已展开' : '已收起'}}">
+          <view>
+            <view class="option-title">计划日期</view>
+            <view class="option-subtitle">{{hasEndDate ? startDate + ' 至 ' + endDate : '从 ' + startDate + ' 开始，不设结束日'}}</view>
+          </view>
+          <view class="option-chevron {{planDatesOpen ? 'open' : ''}}">›</view>
+        </view>
+        <view wx:if="{{planDatesOpen}}" class="nested-fields">
+          <view class="form-row">
+            <view class="form-label">开始日期</view>
+            <picker class="form-value" mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+              <view>{{startDate}} <text class="chevron">›</text></view>
+            </picker>
+          </view>
+          <view class="form-row">
+            <view class="form-label">设置结束日期</view>
+            <switch color="#167A50" checked="{{hasEndDate}}" bindchange="toggleEndDate" />
+          </view>
+          <view wx:if="{{hasEndDate}}" class="form-row">
+            <view class="form-label">结束日期</view>
+            <picker class="form-value" mode="date" value="{{endDate}}" start="{{startDate}}" bindchange="onEndDateChange">
+              <view>{{endDate}} <text class="chevron">›</text></view>
+            </picker>
+          </view>
+          <view class="inline-hint">到达药盒管理期限后，不再把计划显示为普通可服任务。</view>
+        </view>
+        <view wx:if="{{fieldErrors.startDate}}" class="field-error no-indent">{{fieldErrors.startDate}}</view>
+        <view wx:if="{{fieldErrors.endDate}}" class="field-error no-indent">{{fieldErrors.endDate}}</view>
+        <view wx:if="{{fieldErrors.schedule}}" class="field-error no-indent">{{fieldErrors.schedule}}</view>
+      </block>
+    </view>
+
+    <view id="more-fields" class="card more-card">
+      <view class="section-card-title more-title">更多信息</view>
+
+      <view class="option-row" bindtap="toggleQuantity" role="button" aria-label="记录当前剩余数量，{{quantityOpen ? '已展开' : '已收起'}}">
+        <view class="option-plus">{{quantityOpen ? '−' : '＋'}}</view>
+        <view class="option-copy">
+          <view class="option-title">记录当前剩余数量</view>
+          <view class="option-subtitle">{{quantityOpen ? '保存后从这次实际数量重新估算' : '可选，之后也能随时盘点'}}</view>
+        </view>
+        <view class="option-chevron {{quantityOpen ? 'open' : ''}}">›</view>
+      </view>
+      <view wx:if="{{quantityOpen}}" class="nested-fields">
+        <view class="form-row">
+          <view class="form-label">现在剩余</view>
+          <input class="form-input" type="digit" value="{{quantity}}" placeholder="例如 20" bindinput="onQuantityInput" />
+        </view>
+        <view class="form-row">
+          <view class="form-label">单位</view>
+          <picker
+            class="form-value {{unitIndex < 0 ? 'form-placeholder' : ''}}"
+            disabled="{{unitLocked}}"
+            range="{{unitOptions}}"
+            value="{{unitIndex < 0 ? 0 : unitIndex}}"
+            bindchange="onUnitChange"
+          >
+            <view>{{unitIndex >= 0 ? unitOptions[unitIndex] : '选择单位'}} {{unitLocked ? '' : '›'}}</view>
+          </picker>
+        </view>
+        <view wx:if="{{fieldErrors.initialQuantityMilli}}" class="field-error no-indent">{{fieldErrors.initialQuantityMilli}}</view>
+        <view wx:if="{{fieldErrors.unit}}" class="field-error no-indent">{{fieldErrors.unit}}</view>
+      </view>
+
+      <view class="option-row" bindtap="toggleOpenedDetails" role="button" aria-label="记录开封日期，{{openedDateEnabled ? '已展开' : '已收起'}}">
+        <view class="option-plus">{{openedDateEnabled ? '−' : '＋'}}</view>
+        <view class="option-copy">
+          <view class="option-title">记录开封日期</view>
+          <view class="option-subtitle">{{openedDateEnabled ? '开启当天记作第1天' : '包装写有“开封后 N 天”时再填'}}</view>
+        </view>
+        <view class="option-chevron {{openedDateEnabled ? 'open' : ''}}">›</view>
+      </view>
+      <view wx:if="{{openedDateEnabled}}" class="nested-fields">
+        <view class="form-row">
+          <view class="form-label required">开启日期</view>
+          <picker class="form-value" mode="date" value="{{openedDate}}" end="{{today}}" bindchange="onOpenedDateChange">
+            <view>{{openedDate}} <text class="chevron">›</text></view>
+          </picker>
+        </view>
+        <view class="form-row">
+          <view class="form-label required">开封后可用</view>
+          <input class="form-input" type="number" value="{{afterOpenDays}}" placeholder="按包装填写" bindinput="onAfterOpenDaysInput" />
+          <view class="suffix">天</view>
+        </view>
+        <view class="inline-hint">管理期限取包装有效期与开封后期限中较早的一天。</view>
+        <view wx:if="{{fieldErrors.openedDate}}" class="field-error no-indent">{{fieldErrors.openedDate}}</view>
+        <view wx:if="{{fieldErrors.afterOpenDays}}" class="field-error no-indent">{{fieldErrors.afterOpenDays}}</view>
+      </view>
+
+      <view class="option-row" bindtap="toggleDetails" role="button" aria-label="添加规格与备注，{{detailsOpen ? '已展开' : '已收起'}}">
+        <view class="option-plus">{{detailsOpen ? '−' : '＋'}}</view>
+        <view class="option-copy">
+          <view class="option-title">添加规格与备注</view>
+          <view class="option-subtitle">只写你需要记住的内容</view>
+        </view>
+        <view class="option-chevron {{detailsOpen ? 'open' : ''}}">›</view>
+      </view>
+      <view wx:if="{{detailsOpen}}" class="nested-fields notes-fields">
+        <view class="form-row">
+          <view class="form-label">规格</view>
+          <input class="form-input" value="{{specification}}" maxlength="80" placeholder="例如 100mg/片" bindinput="onSpecificationInput" />
+        </view>
+        <textarea class="note-input" value="{{note}}" maxlength="300" placeholder="备注（可选）" bindinput="onNoteInput"></textarea>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+    <view class="sticky-save">
+      <button wx:if="{{pendingSaveId}}" class="button-secondary" bindtap="openPendingSaves">查看待同步任务</button>
+  <view wx:if="{{saveError}}" class="save-error" role="alert">保存失败：{{saveError}}，你填写的内容已保留。</view>
+      <view wx:if="{{photoSaveWarning}}" class="save-warning" role="alert">
+        <view>{{photoSaveWarning}}</view>
+        <button wx:if="{{photoAttemptId}}" class="secondary-button photo-diagnostic-button" bindtap="copyPhotoDiagnostic">复制本次照片诊断</button>
+      </view>
+      <button class="primary-button" disabled="{{saving || photoBusy}}" bindtap="save">
+        {{saving ? '正在保存…' : (pendingSaveId ? '继续同步' : (photoSaveWarning && formState === 'saved' ? '重试照片' : (editing ? '保存修改' : '保存到药箱')))}}
+      </button>
+    </view>
+  </block>
+</view>

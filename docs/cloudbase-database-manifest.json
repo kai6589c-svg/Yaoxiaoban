@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "collectionPrefix": "yxb_",
+  "clientRule": {
+    "read": false,
+    "write": false
+  },
+  "collections": [
+    {
+      "logicalName": "accounts",
+      "name": "yxb_accounts",
+      "purpose": "服务端 OPENID 映射、账号状态与版本；只允许按 _id 访问",
+      "indexes": []
+    },
+    {
+      "logicalName": "profiles",
+      "name": "yxb_profiles",
+      "purpose": "本人及代管成员",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "medications",
+      "name": "yxb_medications",
+      "purpose": "用户确认的药品记录",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_profile_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "profileId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_status__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "status", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_profile_status__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "profileId", "order": "asc" },
+            { "field": "status", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "plans",
+      "name": "yxb_plans",
+      "purpose": "不可覆盖的服药计划版本",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "snapshots",
+      "name": "yxb_snapshots",
+      "purpose": "用户确认的库存盘点基线",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "intake_logs",
+      "name": "yxb_intake_logs",
+      "purpose": "已服、未服、撤销与额外使用记录",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "settings",
+      "name": "yxb_settings",
+      "purpose": "隐私同意、提醒偏好与展示设置",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "calendar_exports",
+      "name": "yxb_calendar_exports",
+      "purpose": "系统日历逐事件写入账本",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_fingerprint__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "fingerprint", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_stale_at",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "staleAt", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "idempotency",
+      "name": "yxb_idempotency",
+      "purpose": "写请求幂等结果；唯一性由确定性 _id 保证",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "reminder_tasks",
+      "name": "yxb_reminder_tasks",
+      "purpose": "低频到期与预计不足订阅任务",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_status",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "status", "order": "asc" }
+          ]
+        },
+        {
+          "name": "status_due_at",
+          "fields": [
+            { "field": "status", "order": "asc" },
+            { "field": "dueAt", "order": "asc" }
+          ]
+        },
+        {
+          "name": "status_next_attempt_due_at",
+          "fields": [
+            { "field": "status", "order": "asc" },
+            { "field": "nextAttemptAt", "order": "asc" },
+            { "field": "dueAt", "order": "asc" }
+          ]
+        },
+        {
+          "name": "status_lease_until",
+          "fields": [
+            { "field": "status", "order": "asc" },
+            { "field": "leaseUntil", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "media",
+      "name": "yxb_media",
+      "purpose": "药盒照片上传任务、所有权绑定与延迟清理账本",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_medication_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "medicationId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_status__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "status", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "deletion_jobs",
+      "name": "yxb_deletion_jobs",
+      "purpose": "删除任务墓碑；不保存可逆 OPENID，只允许按确定性 _id 访问",
+      "indexes": []
+    },
+    {
+      "logicalName": "subscription_grants",
+      "name": "yxb_subscription_grants",
+      "purpose": "按模板和类别记录一次性订阅授权及应用内可用次数",
+      "indexes": [
+        {
+          "name": "account_id__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_kind_status__id",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "kind", "order": "asc" },
+            { "field": "status", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        }
+      ]
+    },
+    {
+      "logicalName": "maintenance_checkpoints",
+      "name": "yxb_maintenance_checkpoints",
+      "purpose": "后台维护轮次、删除优先游标和租约；固定 global 文档，不含账号明文",
+      "indexes": []
+    },
+    {
+      "logicalName": "maintenance_jobs",
+      "name": "yxb_maintenance_jobs",
+      "purpose": "后台维护失败重试队列；只保存确定性账号引用、退避和有限次状态",
+      "indexes": [
+        {
+          "name": "status_next_attempt",
+          "fields": [
+            { "field": "status", "order": "asc" },
+            { "field": "nextAttemptAt", "order": "asc" },
+            { "field": "_id", "order": "asc" }
+          ]
+        },
+        {
+          "name": "account_status",
+          "fields": [
+            { "field": "accountId", "order": "asc" },
+            { "field": "status", "order": "asc" }
+          ]
+        }
+      ]
+    }
+  ]
+}

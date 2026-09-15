@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "今天",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  }
+}

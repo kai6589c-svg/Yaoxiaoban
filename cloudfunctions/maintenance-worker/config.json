@@ -1,0 +1,10 @@
+{
+  "permissions": { "openapi": [] },
+  "triggers": [
+    {
+      "name": "run-maintenance-every-fifteen-minutes",
+      "type": "timer",
+      "config": "0 */15 * * * * *"
+    }
+  ]
+}

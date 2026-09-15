@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/start/index",
+    "pages/today/index",
+    "pages/cabinet/index",
+    "pages/medicine-form/index",
+    "pages/medicine-detail/index",
+    "pages/inventory/index",
+    "pages/history/index",
+    "pages/profiles/index",
+    "pages/settings/index",
+    "pages/privacy/index",
+    "pages/sync/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "药小伴",
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#F7F8F3",
+    "backgroundColor": "#F7F8F3",
+    "backgroundTextStyle": "light",
+    "visualEffectInBackground": "hidden"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A8078",
+    "selectedColor": "#167A50",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/today/index",
+        "text": "今天",
+        "iconPath": "assets/icons/today.png",
+        "selectedIconPath": "assets/icons/today-active.png"
+      },
+      {
+        "pagePath": "pages/cabinet/index",
+        "text": "药箱",
+        "iconPath": "assets/icons/cabinet.png",
+        "selectedIconPath": "assets/icons/cabinet-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

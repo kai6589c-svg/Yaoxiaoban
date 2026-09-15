@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "药盒详情",
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index",
+    "reminder-settings": "/components/reminder-settings/index"
+  }
+}

@@ -1,0 +1,49 @@
+<view class="page subpage inventory-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="盘点余量" />
+  <view wx:if="{{loading}}" class="loading-copy">正在加载…</view>
+  <view wx:elif="{{error}}" class="card empty inventory-error">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">暂时不能盘点</view>
+    <view class="empty-copy">{{error}}</view>
+    <button class="secondary-button" bindtap="retry">重新加载</button>
+  </view>
+  <block wx:else>
+    <view class="guide-card card">
+      <view class="guide-main">
+        <view class="guide-icon"><image src="/assets/ui/pill.png" mode="aspectFit" /></view>
+        <view>
+          <view class="guide-title">{{medicationName}} · {{estimateText}}</view>
+          <view class="guide-copy">数一数现在还剩多少</view>
+        </view>
+      </view>
+      <view class="guide-note"><image src="/assets/ui/info.png" mode="aspectFit" /><text>保存后，后续预计会从这次盘点重新计算。之前的记录仍会保留。</text></view>
+    </view>
+
+    <view class="card quantity-card">
+      <view class="quantity-label">现在剩余</view>
+      <view class="quantity-control">
+        <input
+          class="quantity-input"
+          type="digit"
+          value="{{quantity}}"
+          placeholder="输入数量"
+          focus
+          bindinput="onQuantityInput"
+        />
+        <view class="unit">{{unit}}</view>
+      </view>
+      <view class="quantity-divider"></view>
+      <view class="recorded-row">
+        <view class="recorded-icon"><image src="/assets/ui/calendar.png" mode="aspectFit" /></view>
+        <view>
+          <view class="recorded-label">盘点时间</view>
+          <view class="recorded-value">{{recordedAtText}}</view>
+        </view>
+      </view>
+      <view class="privacy-hint"><image src="/assets/ui/info.png" mode="aspectFit" /><text>盘点值是实际数量；之后展示的余量会明确标为“按计划估算”。</text></view>
+    </view>
+
+    <view class="bottom-space"></view>
+    <view class="sticky-save"><button class="primary-button save-button" disabled="{{saving || quantity === ''}}" bindtap="save">保存盘点</button></view>
+  </block>
+</view>

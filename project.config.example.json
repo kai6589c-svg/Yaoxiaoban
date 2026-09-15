@@ -1,0 +1,23 @@
+{
+  "appid": "touristappid",
+  "projectname": "yaoxiaoban",
+  "description": "药小伴微信小程序",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "dist/miniprogram/",
+  "cloudfunctionRoot": "dist/cloudfunctions/",
+  "setting": {
+    "useCompilerPlugins": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "compileHotReLoad": false,
+    "ignoreUploadUnusedFiles": true,
+    "checkSiteMap": true,
+    "urlCheck": true
+  },
+  "condition": {},
+  "libVersion": "3.16.2"
+}

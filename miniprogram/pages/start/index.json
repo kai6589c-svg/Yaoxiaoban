@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "药小伴",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  }
+}

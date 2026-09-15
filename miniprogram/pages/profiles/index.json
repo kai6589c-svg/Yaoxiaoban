@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "家庭成员",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "app-nav": "/components/app-nav/index"
+  }
+}

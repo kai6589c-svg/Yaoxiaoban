@@ -1,0 +1,35 @@
+<view class="page subpage history-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav title="最近服药记录" />
+  <view class="history-subtitle">记录由你确认，不用于评价服药表现</view>
+  <view wx:if="{{!loading && !error}}" class="card history-filters">
+    <picker range="{{profiles}}" range-key="name" value="{{profileIndex}}" bindchange="changeProfile"><view>成员：{{profiles[profileIndex].name}} ›</view></picker>
+    <picker mode="date" value="{{fromDate}}" bindchange="changeFrom"><view>开始：{{fromDate || '不限日期'}} ›</view></picker>
+    <picker mode="date" value="{{toDate}}" bindchange="changeTo"><view>结束：{{toDate || '不限日期'}} ›</view></picker>
+    <button class="text-button" bindtap="clearFilters">清除筛选</button>
+    <view wx:if="{{filterError}}">{{filterError}}</view>
+    <view>本次同步 {{allLogs.length}} 条未撤销记录{{medicationId ? '（当前药盒）' : ''}}；符合筛选 {{matchedCount}} 条，已显示 {{logs.length}} 条。日期按北京时间。</view>
+  </view>
+  <view wx:if="{{loading}}" class="loading-copy">正在加载…</view>
+  <view wx:elif="{{error}}" class="card empty history-empty">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">服药记录暂时没加载出来</view>
+    <view class="empty-copy">{{error}}</view>
+    <button class="secondary-button" bindtap="retry">重新加载</button>
+  </view>
+  <view wx:elif="{{!logs.length}}" class="card empty history-empty">
+    <view class="empty-symbol">记</view>
+    <view class="empty-title">{{allLogs.length ? '没有符合筛选的记录' : '还没有服药记录'}}</view>
+    <view class="empty-copy">在“今天”中选择已服或未服后，会显示在这里。</view>
+  </view>
+  <view wx:else class="log-list">
+    <view wx:for="{{logs}}" wx:key="id" class="card log-row">
+      <view class="log-icon {{item.statusClass}}"><image src="{{item.iconPath}}" mode="aspectFit" /></view>
+      <view class="log-main">
+        <view class="log-title">{{item.title}}</view>
+        <view class="log-copy">{{item.detail}} · {{item.time}}</view>
+      </view>
+      <button class="undo-button" data-id="{{item.id}}" data-version="{{item.version}}" disabled="{{busyId}}" bindtap="undo">撤销</button>
+    </view>
+  </view>
+  <button wx:if="{{!loading && !error && logs.length < matchedCount}}" class="secondary-button" bindtap="loadMore">加载更多（还有 {{matchedCount - logs.length}} 条）</button>
+</view>

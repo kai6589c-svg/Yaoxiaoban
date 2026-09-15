@@ -1,0 +1,151 @@
+<view class="page root-page today-page" style="--text-scale: {{textScale || 1}};">
+  <app-nav spacer="{{true}}" />
+  <view class="page-head">
+    <view>
+      <view class="page-title">今天</view>
+      <view class="page-subtitle">{{dateText}}</view>
+    </view>
+    <view class="text-button settings-button" bindtap="openSettings" role="button" aria-label="打开设置">
+      <image class="button-icon" src="/assets/ui/gear.png" mode="aspectFit" /><text>设置</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="skeleton-wrap" aria-label="正在加载">
+    <view class="skeleton skeleton-large"></view>
+    <view class="skeleton"></view>
+    <view class="skeleton"></view>
+  </view>
+
+  <view wx:elif="{{error}}" class="card empty">
+    <view class="empty-symbol">!</view>
+    <view class="empty-title">暂时没加载出来</view>
+    <view class="empty-copy">{{error}}，请检查网络后重试。</view>
+    <button class="secondary-button" bindtap="retry">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view wx:if="{{syncNotice}}" class="notice" bindtap="openPendingSaves">{{syncNotice}} · 查看</view>
+    <view wx:if="{{pendingTasks.length}}" class="next-card card">
+      <view class="next-icon-tile"><image src="/assets/ui/pill.png" mode="aspectFit" /></view>
+      <view class="eyebrow">{{pendingTasks[0].heroLabel}}</view>
+      <view class="next-time">{{pendingTasks[0].timeText}}</view>
+      <view class="next-name">{{pendingTasks[0].medicationName}}</view>
+      <view class="next-meta">
+        <text wx:if="{{multipleProfiles}}">{{pendingTasks[0].profileName}} · </text>
+        <text>{{pendingTasks[0].doseText}}</text>
+      </view>
+      <view wx:if="{{pendingTasks[0].canRecord}}" class="next-actions">
+        <button
+          class="primary-button compact"
+          data-key="{{pendingTasks[0].key}}"
+          data-status="taken"
+          disabled="{{busyKey}}"
+          bindtap="recordTask"
+        ><text class="action-symbol">✓</text><text>已服</text></button>
+        <button
+          wx:if="{{pendingTasks[0].canSkip}}"
+          class="secondary-button compact"
+          data-key="{{pendingTasks[0].key}}"
+          data-status="skipped"
+          disabled="{{busyKey}}"
+          bindtap="recordTask"
+        ><text class="action-symbol hollow"></text><text>未服</text></button>
+      </view>
+      <view wx:else class="next-availability">{{pendingTasks[0].availabilityText}}</view>
+    </view>
+
+    <view wx:if="{{allTasks.length}}" class="timeline card">
+      <view class="card-section-head">
+        <view class="card-section-title">今天的计划</view>
+        <button class="plain-link" bindtap="openHistory">查看记录 <text>›</text></button>
+      </view>
+      <view wx:for="{{allTasks}}" wx:key="key" class="task-row">
+        <view class="task-time">{{item.timeText}}</view>
+        <view class="task-main">
+          <view class="task-title">
+            <text>{{item.medicationName}}</text>
+            <text wx:if="{{multipleProfiles}}" class="member-pill">{{item.profileName}}</text>
+          </view>
+          <view class="task-copy">{{item.doseText}} · {{item.statusText}}</view>
+          <button
+            wx:if="{{item.canSkip}}"
+            class="skip-link"
+            data-key="{{item.key}}"
+            data-status="skipped"
+            disabled="{{busyKey}}"
+            bindtap="recordTask"
+          >记为未服</button>
+          <button
+            wx:if="{{item.isRecorded}}"
+            class="undo-link"
+            data-log-id="{{item.logId}}"
+            disabled="{{busyKey}}"
+            bindtap="undoTask"
+          >撤销</button>
+        </view>
+        <button
+          wx:if="{{item.canRecord}}"
+          class="task-status-button"
+          data-key="{{item.key}}"
+          data-status="taken"
+          disabled="{{busyKey}}"
+          bindtap="recordTask"
+          aria-label="记录已服"
+        ></button>
+        <view
+          wx:elif="{{item.needsExpiryReview}}"
+          class="task-status-icon review"
+          data-medication-id="{{item.medicationId}}"
+          bindtap="openTaskMedicine"
+          role="button"
+          aria-label="先核对{{item.medicationName}}的有效期"
+        >!</view>
+        <view wx:else class="task-status-icon {{item.statusClass}}">{{item.statusClass === 'taken' ? '✓' : item.statusClass === 'skipped' ? '×' : ''}}</view>
+      </view>
+    </view>
+
+    <block wx:if="{{risks.length}}">
+      <view class="risk-group card">
+        <view class="card-section-title risk-heading">需要处理</view>
+        <view
+          wx:for="{{risks}}"
+          wx:key="id"
+          class="risk-card {{item.level}}"
+          data-medication-id="{{item.medicationId}}"
+          data-type="{{item.type}}"
+          bindtap="openRisk"
+          role="button"
+          aria-label="查看提醒：{{item.title}}"
+        >
+          <view class="risk-icon-tile">
+            <image src="{{item.level === 'danger' ? '/assets/ui/warning-red.png' : '/assets/ui/warning-amber.png'}}" mode="aspectFit" />
+          </view>
+          <view class="risk-body">
+            <view class="risk-badge">{{item.levelText}}</view>
+            <view class="risk-title">{{item.title}}</view>
+            <view class="risk-detail">{{item.detail}}</view>
+          </view>
+          <view class="risk-arrow">›</view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:if="{{!hasMedicine}}" class="card empty first-empty">
+      <view class="empty-symbol">药</view>
+      <view class="empty-title">先记一盒药</view>
+      <view class="empty-copy">药小伴会帮你记住有效期。只填药名和日期，通常不到45秒。</view>
+      <button class="primary-button" bindtap="addMedicine">添加药盒</button>
+    </view>
+
+    <view wx:elif="{{!allTasks.length}}" class="quiet-empty">
+      <view class="quiet-title">今天没有服药安排</view>
+      <view class="quiet-copy">{{quietActionHint}}</view>
+      <view class="quiet-actions">
+        <button class="primary-button quiet-primary" bindtap="openQuietAction">{{quietActionText}}</button>
+        <button class="plain-link quiet-secondary" bindtap="addMedicine">＋ 添加另一盒药</button>
+      </view>
+    </view>
+
+    <button wx:if="{{hasMedicine && allTasks.length}}" class="add-link" bindtap="addMedicine">＋ 添加药盒</button>
+  </block>
+</view>
